@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions | GROWVEST</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f6;
+    color: #172b25;
+}
+
+header {
+    background: #064e3b;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #a7f3d0;
+}
+
+.back-btn {
+    background: white;
+    color: #064e3b;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 25px 16px;
+}
+
+h1 {
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+}
+
+.summary-card p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.summary-card h2 {
+    font-size: 20px;
+    color: #065f46;
+}
+
+.controls {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.controls input,
+.controls select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dbe3e0;
+    border-radius: 9px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    background: white;
+}
+
+.transactions {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.transaction {
+    padding: 18px;
+    border-bottom: 1px solid #edf1ef;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.transaction:last-child {
+    border-bottom: none;
+}
+
+.tx-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.tx-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #ecfdf5;
+    color: #047857;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.tx-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.tx-date {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.tx-reference {
+    font-size: 11px;
+    color: #94a3b8;
+    word-break: break-all;
+}
+
+.tx-right {
+    text-align: right;
+}
+
+.tx-amount {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.positive {
+    color: #059669;
+}
+
+.negative {
+    color: #dc2626;
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.processing {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.failed,
+.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.empty {
+    text-align: center;
+    padding: 45px 20px;
+    color: #64748b;
+}
+
+.loading {
+    text-align: center;
+    padding: 35px;
+    color: #64748b;
+}
+
+.error {
+    text-align: center;
+    padding: 30px;
+    color: #dc2626;
+}
+
+.refresh-btn {
+    background: #047857;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+@media(max-width: 600px) {
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card h2 {
+        font-size: 22px;
+    }
+
+    .transaction {
+        padding: 15px 12px;
+    }
+
+    .tx-title {
+        font-size: 14px;
+    }
+
+    .tx-amount {
+        font-size: 14px;
+    }
+
+    .tx-reference {
+        max-width: 150px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">GROW<span>VEST</span></div>
+    <button class="back-btn" onclick="location.href='dashboard.html'">
+        ← Dashboard
+    </button>
+</header>
+
+<div class="container">
+
+    <h1>Transaction History</h1>
+    <p class="subtitle">Track all your account activities.</p>
+
+    <div class="summary">
+        <div class="summary-card">
+            <p>Total Transactions</p>
+            <h2 id="totalTransactions">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <p>Total Deposits</p>
+            <h2 id="totalDeposits">KSh 0.00</h2>
+        </div>
+
+        <div class="summary-card">
+            <p>Total Withdrawals</p>
+            <h2 id="totalWithdrawals">KSh 0.00</h2>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input
+            type="search"
+            id="searchInput"
+            placeholder="Search transaction or reference..."
+        >
+
+        <select id="typeFilter">
+            <option value="all">All Transactions</option>
+            <option value="deposit">Deposits</option>
+            <option value="investment">Investments</option>
+            <option value="withdrawal">Withdrawals</option>
+            <option value="referral">Referral Rewards</option>
+            <option value="test_credit">Test Credits</option>
+        </select>
+
+        <select id="statusFilter">
+            <option value="all">All Statuses</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="failed">Failed</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div class="transactions" id="transactionsList">
+        <div class="loading">Loading transactions...</div>
+    </div>
+
+</div>
+
+<script>
+const token =
+    localStorage.getItem("growvest_token") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("authToken");
+
+let allTransactions = [];
+
+function formatMoney(amount) {
+    return "KSh " + Number(amount || 0).toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function formatDate(date) {
+    if (!date) return "Date unavailable";
+
+    return new Date(date).toLocaleString("en-KE", {
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
+}
+
+function getTitle(type) {
+    const titles = {
+        deposit: "Deposit",
+        investment: "Investment",
+        withdrawal: "Withdrawal",
+        referral: "Referral Reward",
+        referral_reward: "Referral Reward",
+        test_credit: "Test Credit"
+    };
+
+    return titles[type] || type.replace(/_/g, " ");
+}
+
+function getIcon(type) {
+    const icons = {
+        deposit: "↓",
+        investment: "📈",
+        withdrawal: "↑",
+        referral: "🎁",
+        referral_reward: "🎁",
+        test_credit: "🧪"
+    };
+
+    return icons[type] || "↔";
+}
+
+function getStatusClass(status) {
+    return String(status || "pending").toLowerCase();
+}
+
+function renderTransactions(transactions) {
+    const container = document.getElementById("transactionsList");
+
+    if (!transactions.length) {
+        container.innerHTML = `
+            <div class="empty">
+                <h3>No transactions found</h3>
+                <p>Your transactions will appear here.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = transactions.map(tx => {
+        const type = String(tx.transaction_type || "").toLowerCase();
+
+        const isIncoming = [
+            "deposit",
+            "referral",
+            "referral_reward",
+            "test_credit"
+        ].includes(type);
+
+        const amountClass = isIncoming ? "positive" : "negative";
+
+        const sign = isIncoming ? "+" : "-";
+
+        return `
+            <div class="transaction">
+
+                <div class="tx-left">
+                    <div class="tx-icon">
+                        ${getIcon(type)}
+                    </div>
+
+                    <div>
+                        <div class="tx-title">
+                            ${getTitle(type)}
+                        </div>
+
+                        <div class="tx-date">
+                            ${formatDate(tx.created_at)}
+                        </div>
+
+                        <div class="tx-reference">
+                            ${tx.reference || "No reference"}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tx-right">
+                    <div class="tx-amount ${amountClass}">
+                        ${sign}${formatMoney(tx.amount)}
+                    </div>
+
+                    <span class="status ${getStatusClass(tx.status)}">
+                        ${tx.status || "Unknown"}
+                    </span>
+                </div>
+
+            </div>
+        `;
+    }).join("");
+}
+
+function applyFilters() {
+    const search = document.getElementById("searchInput")
+        .value.toLowerCase();
+
+    const type = document.getElementById("typeFilter").value;
+
+    const status = document.getElementById("statusFilter").value;
+
+    const filtered = allTransactions.filter(tx => {
+        const matchesType =
+            type === "all" || tx.transaction_type === type;
+
+        const matchesStatus =
+            status === "all" || tx.status === status;
+
+        const searchable = [
+            tx.transaction_type,
+            tx.reference,
+            tx.description,
+            tx.status
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchable.includes(search);
+
+        return matchesType && matchesStatus && matchesSearch;
+    });
+
+    renderTransactions(filtered);
+}
+
+async function loadTransactions() {
+    const container = document.getElementById("transactionsList");
+
+    if (!token) {
+        container.innerHTML = `
+            <div class="error">
+                Session expired. Please log in again.
+                <br><br>
+                <button class="refresh-btn"
+                    onclick="location.href='login.html'">
+                    Login
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="loading">Loading transactions...</div>
+    `;
+
+    try {
+        const response = await fetch(
+            "/.netlify/functions/transactions",
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || data.error ||
+                "Unable to load transactions");
+        }
+
+        allTransactions = data.transactions || [];
+
+        document.getElementById("totalTransactions").textContent =
+            allTransactions.length;
+
+        const deposits = allTransactions
+            .filter(tx => tx.transaction_type === "deposit"
+                && tx.status === "completed")
+            .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+        const withdrawals = allTransactions
+            .filter(tx => tx.transaction_type === "withdrawal"
+                && tx.status === "completed")
+            .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+        document.getElementById("totalDeposits").textContent =
+            formatMoney(deposits);
+
+        document.getElementById("totalWithdrawals").textContent =
+            formatMoney(withdrawals);
+
+        applyFilters();
+
+    } catch (error) {
+        container.innerHTML = `
+            <div class="error">
+                ${error.message}
+                <br><br>
+                <button class="refresh-btn" onclick="loadTransactions()">
+                    Try Again
+                </button>
+            </div>
+        `;
+    }
+}
+
+document.getElementById("searchInput")
+    .addEventListener("input", applyFilters);
+
+document.getElementById("typeFilter")
+    .addEventListener("change", applyFilters);
+
+document.getElementById("statusFilter")
+    .addEventListener("change", applyFilters);
+
+loadTransactions();
+</script>
+
+</body>
+</html>
