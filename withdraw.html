@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Funds - GrowVest</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f7f5;
+    color: #17251d;
+}
+
+header {
+    background: #064e3b;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #a7f3d0;
+}
+
+header a {
+    color: white;
+    background: #059669;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 7px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 15px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+    color: #064e3b;
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+.subtitle {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.balance {
+    background: linear-gradient(135deg, #064e3b, #059669);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.balance p {
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
+.balance h2 {
+    font-size: 30px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: #f8fafc;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: #047857;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    display: none;
+    padding: 14px;
+    border-radius: 9px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.info {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 10px;
+    color: #166534;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+@media(max-width: 480px) {
+    h1 {
+        font-size: 26px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">GROW<span>VEST</span></div>
+    <a href="dashboard.html">Dashboard</a>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Withdraw Funds</h1>
+
+        <p class="subtitle">
+            Submit a withdrawal request to your M-Pesa number.
+        </p>
+
+        <div class="balance">
+            <p>Available Wallet Balance</p>
+            <h2 id="availableBalance">KSh 0.00</h2>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="withdrawForm">
+
+            <label for="amount">Withdrawal Amount (KSh)</label>
+
+            <input
+                type="number"
+                id="amount"
+                min="1"
+                step="1"
+                placeholder="Enter amount"
+                required
+            >
+
+            <label for="phone">M-Pesa Phone Number</label>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="0712345678"
+                required
+            >
+
+            <button type="submit" id="withdrawBtn">
+                Submit Withdrawal Request
+            </button>
+
+        </form>
+
+        <div class="info">
+            <strong>Important:</strong><br>
+            Withdrawal requests are subject to verification and approval.
+            Submitting a request does not mean the money has been sent.
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    © <span id="year"></span> GrowVest. Grow Your Future.
+</footer>
+
+<script>
+
+document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+const token = localStorage.getItem("growvest_token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
+const form = document.getElementById("withdrawForm");
+const button = document.getElementById("withdrawBtn");
+const messageBox = document.getElementById("message");
+
+let availableBalance = 0;
+let submitting = false;
+
+function formatMoney(amount) {
+    return "KSh " + Number(amount || 0).toLocaleString(
+        "en-KE",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+function showMessage(message, type) {
+    messageBox.textContent = message;
+    messageBox.className = "message " + type;
+    messageBox.style.display = "block";
+}
+
+function normalizePhone(phone) {
+
+    phone = phone.replace(/\s+/g, "");
+
+    if (phone.startsWith("+254")) {
+        return phone.substring(1);
+    }
+
+    if (phone.startsWith("254")) {
+        return phone;
+    }
+
+    if (phone.startsWith("0")) {
+        return "254" + phone.substring(1);
+    }
+
+    return phone;
+}
+
+async function loadBalance() {
+
+    try {
+
+        const response = await fetch(
+            "/.netlify/functions/profile",
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Unable to load wallet."
+            );
+        }
+
+        availableBalance = Number(
+            data.user?.balance || 0
+        );
+
+        document.getElementById("availableBalance")
+            .textContent = formatMoney(availableBalance);
+
+    } catch (error) {
+
+        showMessage(
+            "Unable to load your wallet balance. Refresh the page.",
+            "error"
+        );
+    }
+}
+
+form.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    if (submitting) return;
+
+    const amount = Number(
+        document.getElementById("amount").value
+    );
+
+    const phone = normalizePhone(
+        document.getElementById("phone").value
+    );
+
+    if (!Number.isInteger(amount) || amount < 1) {
+        showMessage("Enter a valid withdrawal amount.", "error");
+        return;
+    }
+
+    if (amount > availableBalance) {
+        showMessage("Insufficient wallet balance.", "error");
+        return;
+    }
+
+    if (!/^254[17]\d{8}$/.test(phone)) {
+        showMessage("Enter a valid Kenyan M-Pesa number.", "error");
+        return;
+    }
+
+    submitting = true;
+    button.disabled = true;
+    button.textContent = "Submitting request...";
+
+    try {
+
+        const response = await fetch(
+            "/.netlify/functions/withdraw",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    amount: amount,
+                    phone: phone
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Withdrawal request failed."
+            );
+        }
+
+        showMessage(
+            "Withdrawal request submitted successfully! Reference: " +
+            data.reference +
+            ". Your request is pending approval.",
+            "success"
+        );
+
+        // Update displayed balance
+        availableBalance -= amount;
+
+        document.getElementById("availableBalance")
+            .textContent = formatMoney(availableBalance);
+
+        form.reset();
+
+    } catch (error) {
+
+        console.error("Withdrawal error:", error);
+
+        showMessage(
+            error.message || "Unable to submit withdrawal request.",
+            "error"
+        );
+
+    } finally {
+
+        submitting = false;
+        button.disabled = false;
+        button.textContent = "Submit Withdrawal Request";
+
+    }
+
+});
+
+loadBalance();
+
+</script>
+
+</body>
+</html>
