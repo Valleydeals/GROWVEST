@@ -496,7 +496,6 @@ th {
 
 </div>
 
-<script>
 
 const adminToken = localStorage.getItem("growvest_admin_token");
 
@@ -509,7 +508,6 @@ function toggleSidebar() {
 }
 
 function showSection(sectionId, button) {
-
   document.querySelectorAll(".section").forEach(section => {
     section.classList.remove("active");
   });
@@ -546,7 +544,93 @@ function logoutAdmin() {
   window.location.href = "admin-login.html";
 }
 
-</script>
+function formatMoney(amount) {
+  return "KSh " + Number(amount || 0).toLocaleString("en-KE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+async function loadAdminStats() {
+  try {
+    const response = await fetch("/.netlify/functions/admin-stats", {
+      headers: {
+        Authorization: "Bearer " + adminToken
+      }
+    });
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message || "Failed to load statistics");
+    }
+
+    document.getElementById("totalUsers").textContent =
+      Number(data.stats.totalUsers).toLocaleString();
+
+    document.getElementById("totalDeposits").textContent =
+      formatMoney(data.stats.totalDeposits);
+
+    document.getElementById("pendingWithdrawals").textContent =
+      Number(data.stats.pendingWithdrawals).toLocaleString();
+
+    document.getElementById("activeInvestments").textContent =
+      formatMoney(data.stats.activeInvestments);
+
+    document.getElementById("overviewStatus").textContent =
+      "Platform statistics successfully loaded from the database.";
+
+    renderTransactions(data.transactions || []);
+
+  } catch (error) {
+    console.error(error);
+
+    document.getElementById("overviewStatus").textContent =
+      "Unable to load statistics. Check your backend deployment.";
+  }
+}
+
+function renderTransactions(transactions) {
+  const tbody = document.getElementById("recentTransactions");
+
+  if (!transactions.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6">No transactions found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = transactions.map(tx => `
+    <tr>
+      <td>${escapeHTML(tx.reference || tx.id || "-")}</td>
+      <td>${escapeHTML(tx.full_name || "Unknown")}</td>
+      <td>${escapeHTML(tx.transaction_type || "-")}</td>
+      <td>${formatMoney(tx.amount)}</td>
+      <td><span class="status">${escapeHTML(tx.status || "-")}</span></td>
+      <td>${tx.created_at ? new Date(tx.created_at).toLocaleDateString() : "-"}</td>
+    </tr>
+  `).join("");
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[character]));
+}
+
+loadAdminStats();
+
 
 </body>
 </html>
