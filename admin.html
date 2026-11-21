@@ -533,6 +533,9 @@ function showSection(sectionId, button) {
 
   document.getElementById("pageTitle").textContent =
     titles[sectionId] || "GrowVest Admin";
+    if (sectionId === "users") {
+  loadAdminUsers();
+}
 
   if (window.innerWidth <= 650) {
     document.getElementById("sidebar").classList.remove("open");
@@ -630,6 +633,74 @@ function escapeHTML(value) {
 }
 
 loadAdminStats();
+
+async function loadAdminUsers(search = "") {
+  const tbody = document.getElementById("usersTable");
+
+  tbody.innerHTML = `
+    <tr><td colspan="5">Loading users...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-users?search=" +
+      encodeURIComponent(search),
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.users.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="5">No users found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.users.map(user => `
+      <tr>
+        <td>${escapeHTML(user.full_name)}</td>
+        <td>${escapeHTML(user.phone)}</td>
+        <td>${escapeHTML(user.email || "-")}</td>
+        <td>
+          <span class="status">${escapeHTML(user.status)}</span>
+        </td>
+        <td>
+          ${user.created_at
+            ? new Date(user.created_at).toLocaleDateString()
+            : "-"}
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Users loading error:", error);
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">Failed to load users.</td>
+      </tr>
+    `;
+  }
+}
+
+document.getElementById("userSearch").addEventListener("input", function() {
+  loadAdminUsers(this.value);
+});
+
 </script>
 
 </body>
