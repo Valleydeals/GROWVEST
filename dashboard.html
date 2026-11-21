@@ -1,335 +1,274 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROWVEST Dashboard</title>
+<title>GrowVest Dashboard</title>
 
 <style>
-:root {
-  --green: #047857;
-  --green-dark: #064e3b;
-  --gold: #d4af37;
-  --bg: #f4f7f5;
-  --white: #ffffff;
-  --text: #182522;
-  --muted: #738078;
-}
-
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+    background: #f4f7f5;
+    color: #17251d;
 }
 
 header {
-  background: var(--white);
-  border-bottom: 1px solid #e8eeea;
-  padding: 16px 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    background: #064e3b;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--green);
+    font-size: 23px;
+    font-weight: bold;
 }
 
 .logo span {
-  color: var(--gold);
+    color: #a7f3d0;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.logout-btn {
-  border: none;
-  background: #fee2e2;
-  color: #b91c1c;
-  padding: 9px 15px;
-  border-radius: 8px;
-  cursor: pointer;
+header button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 7px;
+    cursor: pointer;
 }
 
 .container {
-  width: 92%;
-  max-width: 1200px;
-  margin: 30px auto;
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px 15px;
 }
 
 .welcome {
-  margin-bottom: 25px;
+    margin-bottom: 25px;
 }
 
 .welcome h1 {
-  font-size: 27px;
-  margin-bottom: 8px;
+    font-size: 26px;
+    margin-bottom: 8px;
 }
 
 .welcome p {
-  color: var(--muted);
+    color: #64748b;
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #064e3b, #047857);
-  color: white;
-  padding: 30px;
-  border-radius: 20px;
-  margin-bottom: 25px;
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(135deg, #064e3b, #059669);
+    color: white;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-.balance-card::after {
-  content: "";
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 50%;
-  right: -50px;
-  top: -50px;
+.balance-card p {
+    opacity: 0.85;
+    margin-bottom: 10px;
 }
 
-.balance-label {
-  color: #d1fae5;
-  font-size: 14px;
+.balance-card h2 {
+    font-size: 35px;
+    margin-bottom: 22px;
 }
 
-.balance {
-  font-size: 36px;
-  font-weight: 800;
-  margin: 15px 0 25px;
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.balance-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+.actions a {
+    text-decoration: none;
+    background: white;
+    color: #065f46;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
 }
 
-.action-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.deposit-btn {
-  background: white;
-  color: var(--green-dark);
-}
-
-.withdraw-btn {
-  background: rgba(255,255,255,0.15);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.4);
+.actions a:hover {
+    opacity: 0.85;
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 25px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .stat-card {
-  background: white;
-  padding: 22px;
-  border-radius: 15px;
-  border: 1px solid #e8eeea;
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
 }
 
-.stat-card .label {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 12px;
+.stat-card p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 12px;
 }
 
 .stat-card h2 {
-  font-size: 24px;
-}
-
-.stat-card .icon {
-  font-size: 23px;
-  margin-bottom: 14px;
+    font-size: 22px;
+    color: #064e3b;
 }
 
 .section {
-  background: white;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 25px;
-  border: 1px solid #e8eeea;
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  gap: 10px;
-}
-
-.section-header h2 {
-  font-size: 19px;
-}
-
-.view-all {
-  color: var(--green);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 35px 15px;
-  color: var(--muted);
-}
-
-.empty-state .empty-icon {
-  font-size: 42px;
-  margin-bottom: 15px;
-}
-
-.empty-state h3 {
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.empty-state p {
-  font-size: 14px;
-  line-height: 1.6;
+.section h2 {
+    margin-bottom: 18px;
+    font-size: 20px;
 }
 
 .referral-box {
-  background: #ecfdf5;
-  border: 1px solid #d1fae5;
-  border-radius: 15px;
-  padding: 22px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.referral-box h3 {
-  color: var(--green-dark);
-  margin-bottom: 10px;
+.referral-box input {
+    flex: 1;
+    min-width: 150px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
 }
 
-.referral-code {
-  display: flex;
-  margin-top: 15px;
-  gap: 10px;
+.referral-box button {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.referral-code input {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
 }
 
-.copy-btn {
-  background: var(--green);
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 8px;
-  cursor: pointer;
+.transaction:last-child {
+    border-bottom: none;
+}
+
+.transaction-info h4 {
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.transaction-info p {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.amount {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.positive {
+    color: #059669;
+}
+
+.negative {
+    color: #dc2626;
+}
+
+.status {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+}
+
+.message {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: none;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.loading {
+    color: #64748b;
+    padding: 20px;
+    text-align: center;
 }
 
 footer {
-  text-align: center;
-  padding: 25px;
-  color: var(--muted);
-  font-size: 13px;
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    font-size: 13px;
 }
 
-.notice {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
-  padding: 15px;
-  border-radius: 12px;
-  font-size: 13px;
-  line-height: 1.6;
-  margin-bottom: 25px;
+@media(max-width: 768px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .welcome h1 {
+        font-size: 23px;
+    }
+
+    .balance-card h2 {
+        font-size: 29px;
+    }
 }
 
-@media(max-width: 850px) {
-  .stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+@media(max-width: 400px) {
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
 
-@media(max-width: 500px) {
-  header {
-    padding: 15px 4%;
-  }
+    .stat-card {
+        padding: 15px;
+    }
 
-  .logo {
-    font-size: 20px;
-  }
+    .stat-card h2 {
+        font-size: 18px;
+    }
 
-  .user-name {
-    display: none;
-  }
-
-  .container {
-    width: 94%;
-    margin: 20px auto;
-  }
-
-  .welcome h1 {
-    font-size: 23px;
-  }
-
-  .balance-card {
-    padding: 23px;
-  }
-
-  .balance {
-    font-size: 30px;
-  }
-
-  .stats {
-    gap: 10px;
-  }
-
-  .stat-card {
-    padding: 17px;
-  }
-
-  .stat-card h2 {
-    font-size: 20px;
-  }
-
-  .section {
-    padding: 18px;
-  }
-
-  .referral-code {
-    flex-direction: column;
-  }
+    .actions a {
+        flex: 1;
+        text-align: center;
+    }
 }
 </style>
 </head>
@@ -337,192 +276,280 @@ footer {
 <body>
 
 <header>
-  <div class="logo">GROW<span>VEST</span></div>
-
-  <div class="header-right">
-    <span class="user-name" id="headerName">User</span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
+    <div class="logo">GROW<span>VEST</span></div>
+    <button onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
-  <div class="welcome">
-    <h1>Welcome, <span id="welcomeName">Investor</span> 👋</h1>
-    <p>Manage your account and track your activity.</p>
-  </div>
+    <div id="errorMessage" class="message error"></div>
 
-  <div class="notice">
-    Investment products, rates, risks, fees and withdrawal conditions
-    must be clearly disclosed before funds are accepted. No earnings
-    are guaranteed.
-  </div>
-
-  <div class="balance-card">
-    <div class="balance-label">Available Balance</div>
-
-    <div class="balance" id="balance">
-      KSh 0.00
+    <div class="welcome">
+        <h1>Welcome, <span id="welcomeName">User</span> 👋</h1>
+        <p>Grow your future with GrowVest.</p>
     </div>
 
-    <div class="balance-actions">
-      <a href="deposit.html" class="action-btn deposit-btn">
-        + Deposit
-      </a>
+    <div class="balance-card">
+        <p>Available Wallet Balance</p>
+        <h2 id="balance">KSh 0.00</h2>
 
-      <a href="withdraw.html" class="action-btn withdraw-btn">
-        Withdraw
-      </a>
-    </div>
-  </div>
-
-  <div class="stats">
-
-    <div class="stat-card">
-      <div class="icon">📈</div>
-      <div class="label">Active Investments</div>
-      <h2>KSh 0.00</h2>
+        <div class="actions">
+            <a href="deposit.html">Deposit</a>
+            <a href="withdraw.html">Withdraw</a>
+            <a href="investments.html">Invest</a>
+            <a href="transactions.html">Transactions</a>
+        </div>
     </div>
 
-    <div class="stat-card">
-      <div class="icon">💰</div>
-      <div class="label">Total Deposits</div>
-      <h2>KSh 0.00</h2>
+    <div class="stats">
+
+        <div class="stat-card">
+            <p>Active Investments</p>
+            <h2 id="activeInvestments">KSh 0.00</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Total Deposits</p>
+            <h2 id="totalDeposits">KSh 0.00</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Referral Rewards</p>
+            <h2 id="referralRewards">KSh 0.00</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Total Withdrawals</p>
+            <h2 id="totalWithdrawals">KSh 0.00</h2>
+        </div>
+
     </div>
 
-    <div class="stat-card">
-      <div class="icon">🎁</div>
-      <div class="label">Referral Rewards</div>
-      <h2>KSh 0.00</h2>
+    <div class="section">
+        <h2>Referral Program</h2>
+        <p style="color:#64748b;margin-bottom:15px;">
+            Invite friends to join GrowVest using your referral code.
+        </p>
+
+        <div class="referral-box">
+            <input
+                type="text"
+                id="referralCode"
+                readonly
+                placeholder="Loading referral code..."
+            >
+
+            <button onclick="copyReferralCode()">Copy Code</button>
+        </div>
+
+        <p id="referralMessage" style="margin-top:10px;color:#059669;"></p>
     </div>
 
-    <div class="stat-card">
-      <div class="icon">📊</div>
-      <div class="label">Total Withdrawals</div>
-      <h2>KSh 0.00</h2>
+    <div class="section">
+        <h2>Recent Transactions</h2>
+
+        <div id="transactionsList">
+            <div class="loading">
+                Loading transactions...
+            </div>
+        </div>
     </div>
-
-  </div>
-
-  <div class="section">
-
-    <div class="section-header">
-      <h2>My Investments</h2>
-      <a href="investments.html" class="view-all">View All</a>
-    </div>
-
-    <div class="empty-state">
-      <div class="empty-icon">📊</div>
-      <h3>No investments yet</h3>
-      <p>
-        Your investment activity will appear here
-        once eligible investment products are available.
-      </p>
-    </div>
-
-  </div>
-
-  <div class="section">
-
-    <div class="section-header">
-      <h2>Recent Transactions</h2>
-      <a href="transactions.html" class="view-all">View All</a>
-    </div>
-
-    <div class="empty-state">
-      <div class="empty-icon">💳</div>
-      <h3>No transactions yet</h3>
-      <p>Your deposits and withdrawals will appear here.</p>
-    </div>
-
-  </div>
-
-  <div class="section">
-
-    <div class="referral-box">
-      <h3>Invite Friends</h3>
-
-      <p>
-        Share your referral code with friends.
-      </p>
-
-      <div class="referral-code">
-        <input
-          type="text"
-          id="referralCode"
-          readonly
-          value="Loading..."
-        >
-
-        <button class="copy-btn" onclick="copyReferralCode()">
-          Copy
-        </button>
-      </div>
-    </div>
-
-  </div>
 
 </div>
 
 <footer>
-  © 2026 GROWVEST — Grow Your Future.
+    © <span id="year"></span> GrowVest. Grow Your Future.
 </footer>
 
 <script>
 
-// Authentication check
+document.getElementById("year").textContent =
+    new Date().getFullYear();
+
 const token = localStorage.getItem("growvest_token");
-const userData = localStorage.getItem("growvest_user");
 
-if (!token || !userData) {
-  window.location.href = "login.html";
+if (!token) {
+    window.location.href = "login.html";
 }
 
-let user = {};
-
-try {
-  user = JSON.parse(userData);
-} catch (error) {
-  logout();
+function formatMoney(amount) {
+    return "KSh " + Number(amount || 0).toLocaleString(
+        "en-KE",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
 }
 
-// Display user information
-if (user && user.full_name) {
-  document.getElementById("welcomeName").textContent =
-    user.full_name.split(" ")[0];
+function logout() {
+    localStorage.removeItem("growvest_token");
+    localStorage.removeItem("growvest_user");
 
-  document.getElementById("headerName").textContent =
-    user.full_name;
+    window.location.href = "login.html";
 }
 
-// Display referral code
-if (user && user.referral_code) {
-  document.getElementById("referralCode").value =
-    user.referral_code;
+function showError(message) {
+    const box = document.getElementById("errorMessage");
+
+    box.textContent = message;
+    box.style.display = "block";
 }
 
-// Copy referral code
+function hideError() {
+    document.getElementById("errorMessage").style.display = "none";
+}
+
 function copyReferralCode() {
-  const input = document.getElementById("referralCode");
+    const code = document.getElementById("referralCode").value;
 
-  input.select();
-  input.setSelectionRange(0, 99999);
+    if (!code) {
+        return;
+    }
 
-  navigator.clipboard.writeText(input.value)
-    .then(() => alert("Referral code copied!"))
-    .catch(() => {
-      document.execCommand("copy");
-      alert("Referral code copied!");
+    navigator.clipboard.writeText(code)
+        .then(() => {
+            document.getElementById("referralMessage")
+                .textContent = "Referral code copied successfully!";
+        })
+        .catch(() => {
+            document.getElementById("referralCode").select();
+
+            document.execCommand("copy");
+
+            document.getElementById("referralMessage")
+                .textContent = "Referral code copied!";
+        });
+}
+
+function renderTransactions(transactions) {
+    const container = document.getElementById("transactionsList");
+
+    if (!transactions || transactions.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>No transactions yet</h3>
+                <p>Your transactions will appear here.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    transactions.forEach(transaction => {
+
+        const type = transaction.transaction_type || "Transaction";
+
+        const amount = Number(transaction.amount || 0);
+
+        const isPositive = [
+            "deposit",
+            "referral_bonus",
+            "investment_return"
+        ].includes(type.toLowerCase());
+
+        const item = document.createElement("div");
+
+        item.className = "transaction";
+
+        item.innerHTML = `
+            <div class="transaction-info">
+                <h4>${type.replace(/_/g, " ")}</h4>
+                <p>${transaction.description || ""}</p>
+                <p>${transaction.created_at
+                    ? new Date(transaction.created_at).toLocaleString()
+                    : ""}</p>
+                <p class="status">Status: ${transaction.status || "pending"}</p>
+            </div>
+
+            <div class="amount ${isPositive ? "positive" : "negative"}">
+                ${isPositive ? "+" : "-"}${formatMoney(amount)}
+            </div>
+        `;
+
+        container.appendChild(item);
     });
 }
 
-// Logout
-function logout() {
-  localStorage.removeItem("growvest_token");
-  localStorage.removeItem("growvest_user");
+async function loadDashboard() {
 
-  window.location.href = "login.html";
+    try {
+
+        hideError();
+
+        const response = await fetch(
+            "/.netlify/functions/profile",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
+            throw new Error(data.message || "Unable to load dashboard.");
+        }
+
+        const user = data.user || {};
+        const stats = data.statistics || {};
+
+        document.getElementById("welcomeName").textContent =
+            user.full_name || "User";
+
+        document.getElementById("balance").textContent =
+            formatMoney(user.balance);
+
+        document.getElementById("activeInvestments").textContent =
+            formatMoney(stats.active_investments);
+
+        document.getElementById("totalDeposits").textContent =
+            formatMoney(stats.total_deposits);
+
+        document.getElementById("referralRewards").textContent =
+            formatMoney(stats.referral_rewards);
+
+        document.getElementById("totalWithdrawals").textContent =
+            formatMoney(stats.total_withdrawals);
+
+        document.getElementById("referralCode").value =
+            user.referral_code || "";
+
+        localStorage.setItem(
+            "growvest_user",
+            JSON.stringify(user)
+        );
+
+        renderTransactions(data.transactions || []);
+
+    } catch (error) {
+
+        console.error("Dashboard error:", error);
+
+        showError(
+            error.message || "Could not connect to the server."
+        );
+
+        document.getElementById("transactionsList").innerHTML = `
+            <div class="empty-state">
+                <h3>Unable to load transactions</h3>
+                <p>Please refresh the page.</p>
+            </div>
+        `;
+    }
 }
+
+loadDashboard();
 
 </script>
 
