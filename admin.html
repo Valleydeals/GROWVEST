@@ -272,6 +272,10 @@ th {
   <button class="nav-btn" onclick="showSection('deposits',this)">💰 Deposits</button>
   <button class="nav-btn" onclick="showSection('withdrawals',this)">💸 Withdrawals</button>
   <button class="nav-btn" onclick="showSection('investments',this)">📈 Investments</button>
+  <button onclick="showSection('logs', this)">
+  <i class="fas fa-history"></i>
+  <span>Audit Logs</span>
+</button>
 
   <h4>MANAGEMENT</h4>
 
@@ -519,7 +523,31 @@ th {
       </div>
     </div>
   </div>
+<section id="logs" class="content-section">
+  <div class="section-header">
+    <h2>Admin Audit Logs</h2>
+    <p>Track administrative actions and system activity.</p>
+  </div>
 
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Admin</th>
+          <th>Details</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+
+      <tbody id="logsTable">
+        <tr>
+          <td colspan="4">Loading audit logs...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 </div>
 
 <script>
