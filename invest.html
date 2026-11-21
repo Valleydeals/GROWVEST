@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invest | GROWVEST</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7f5;
+  color: #17231c;
+}
+
+header {
+  background: #10291e;
+  color: white;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #49d18b;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #123c2a, #087c50);
+  color: white;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+}
+
+.balance-card p {
+  color: #c5e8d4;
+  margin-bottom: 10px;
+}
+
+.balance-card h2 {
+  font-size: 30px;
+}
+
+.section-title {
+  margin: 25px 0 15px;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.plan {
+  background: white;
+  border: 2px solid #e4ebe6;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.plan:hover {
+  border-color: #0c9b60;
+  transform: translateY(-2px);
+}
+
+.plan.selected {
+  border-color: #0c9b60;
+  background: #f0fff6;
+}
+
+.plan h3 {
+  margin-bottom: 12px;
+  color: #087c50;
+}
+
+.plan p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.plan .range {
+  font-weight: bold;
+  font-size: 17px;
+}
+
+.form-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  margin-top: 25px;
+}
+
+label {
+  display: block;
+  margin: 15px 0 8px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d7e1db;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.summary {
+  background: #f4f8f5;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.summary div {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: #087c50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #9aa9a0;
+  cursor: not-allowed;
+}
+
+.notice {
+  background: #fff7df;
+  color: #795b13;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.status {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #718078;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">GROWVEST</div>
+  <a href="dashboard.html">← Dashboard</a>
+</header>
+
+<div class="container">
+
+  <div class="balance-card">
+    <p>Available Wallet Balance</p>
+    <h2 id="walletBalance">KSh 0.00</h2>
+  </div>
+
+  <h2 class="section-title">Investment Plans</h2>
+
+  <div class="plans" id="plansContainer">
+    <p>Loading investment plans...</p>
+  </div>
+
+  <div class="form-card">
+
+    <h2>Start Investing</h2>
+
+    <label for="investmentAmount">
+      Investment Amount (KSh)
+    </label>
+
+    <input
+      type="number"
+      id="investmentAmount"
+      placeholder="Enter amount"
+      min="0"
+    >
+
+    <div class="summary">
+
+      <div>
+        <span>Selected Plan</span>
+        <strong id="selectedPlanName">None</strong>
+      </div>
+
+      <div>
+        <span>Minimum Amount</span>
+        <strong id="minimumAmount">KSh 0</strong>
+      </div>
+
+      <div>
+        <span>Maximum Amount</span>
+        <strong id="maximumAmount">KSh 0</strong>
+      </div>
+
+      <div>
+        <span>Duration</span>
+        <strong id="duration">0 days</strong>
+      </div>
+
+      <div>
+        <span>Daily Rate</span>
+        <strong id="dailyRate">0%</strong>
+      </div>
+
+    </div>
+
+    <button id="investButton" disabled>
+      Select a Plan
+    </button>
+
+    <div class="status" id="statusMessage"></div>
+
+    <div class="notice">
+      Investment involves risk. The plan information shown is subject
+      to the official investment terms. Returns are not guaranteed.
+      Review all terms and risks before committing funds.
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GROWVEST · Grow Your Future
+</footer>
+
+<script>
+let plans = [];
+let selectedPlan = null;
+let walletBalance = 0;
+
+const token =
+  localStorage.getItem("growvest_token") ||
+  localStorage.getItem("token") ||
+  localStorage.getItem("authToken");
+
+const plansContainer =
+  document.getElementById("plansContainer");
+
+const amountInput =
+  document.getElementById("investmentAmount");
+
+const investButton =
+  document.getElementById("investButton");
+
+const statusMessage =
+  document.getElementById("statusMessage");
+
+function formatMoney(amount) {
+  return "KSh " + Number(amount || 0).toLocaleString(
+    "en-KE",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+async function loadProfile() {
+  if (!token) {
+    document.getElementById("walletBalance").textContent =
+      "Login required";
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/profile",
+      {
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+
+    walletBalance =
+      Number(data.wallet?.balance || data.balance || 0);
+
+    document.getElementById("walletBalance").textContent =
+      formatMoney(walletBalance);
+
+  } catch (error) {
+    console.error("Profile loading error:", error);
+  }
+}
+
+async function loadPlans() {
+  try {
+    const response = await fetch(
+      "/.netlify/functions/investment-plans"
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to load plans");
+    }
+
+    plans = await response.json();
+
+    renderPlans();
+
+  } catch (error) {
+    plansContainer.innerHTML =
+      "<p>Unable to load investment plans.</p>";
+
+    console.error(error);
+  }
+}
+
+function renderPlans() {
+  if (!plans.length) {
+    plansContainer.innerHTML =
+      "<p>No investment plans currently available.</p>";
+    return;
+  }
+
+  plansContainer.innerHTML = plans.map(plan => `
+    <div
+      class="plan"
+      data-plan-id="${escapeHTML(plan.id)}"
+      onclick="selectPlan('${escapeHTML(plan.id)}')"
+    >
+      <h3>${escapeHTML(plan.name)}</h3>
+
+      <p class="range">
+        ${formatMoney(plan.minimum_amount)}
+        – ${formatMoney(plan.maximum_amount)}
+      </p>
+
+      <p>Duration: ${plan.duration_days} days</p>
+
+      <p>
+        Daily rate:
+        ${Number(plan.daily_rate || 0)}%
+      </p>
+
+      <p>Active plan</p>
+    </div>
+  `).join("");
+}
+
+function selectPlan(planId) {
+  selectedPlan = plans.find(
+    plan => String(plan.id) === String(planId)
+  );
+
+  if (!selectedPlan) return;
+
+  document.querySelectorAll(".plan").forEach(card => {
+    card.classList.remove("selected");
+  });
+
+  const selectedCard = document.querySelector(
+    `[data-plan-id="${planId}"]`
+  );
+
+  if (selectedCard) {
+    selectedCard.classList.add("selected");
+  }
+
+  document.getElementById("selectedPlanName").textContent =
+    selectedPlan.name;
+
+  document.getElementById("minimumAmount").textContent =
+    formatMoney(selectedPlan.minimum_amount);
+
+  document.getElementById("maximumAmount").textContent =
+    formatMoney(selectedPlan.maximum_amount);
+
+  document.getElementById("duration").textContent =
+    selectedPlan.duration_days + " days";
+
+  document.getElementById("dailyRate").textContent =
+    Number(selectedPlan.daily_rate || 0) + "%";
+
+  investButton.disabled = false;
+  investButton.textContent = "Confirm Investment";
+
+  validateAmount();
+}
+
+function validateAmount() {
+  const amount = Number(amountInput.value);
+
+  if (!selectedPlan) {
+    investButton.disabled = true;
+    return;
+  }
+
+  if (!amount || amount <= 0) {
+    statusMessage.textContent = "";
+    investButton.disabled = true;
+    return;
+  }
+
+  if (amount < Number(selectedPlan.minimum_amount)) {
+    statusMessage.textContent =
+      "Minimum investment is " +
+      formatMoney(selectedPlan.minimum_amount);
+
+    investButton.disabled = true;
+    return;
+  }
+
+  if (amount > Number(selectedPlan.maximum_amount)) {
+    statusMessage.textContent =
+      "Maximum investment is " +
+      formatMoney(selectedPlan.maximum_amount);
+
+    investButton.disabled = true;
+    return;
+  }
+
+  if (amount > walletBalance) {
+    statusMessage.textContent =
+      "Insufficient wallet balance.";
+
+    investButton.disabled = true;
+    return;
+  }
+
+  statusMessage.textContent =
+    "Amount is valid. Review the terms before proceeding.";
+
+  investButton.disabled = false;
+}
+
+amountInput.addEventListener("input", validateAmount);
+
+investButton.addEventListener("click", async function() {
+  if (!selectedPlan || !token) {
+    statusMessage.textContent =
+      "Please log in and select a plan.";
+    return;
+  }
+
+  const amount = Number(amountInput.value);
+
+  if (
+    amount < Number(selectedPlan.minimum_amount) ||
+    amount > Number(selectedPlan.maximum_amount) ||
+    amount > walletBalance
+  ) {
+    validateAmount();
+    return;
+  }
+
+  const confirmed = confirm(
+    "Confirm investment of " +
+    formatMoney(amount) +
+    " in the " +
+    selectedPlan.name +
+    " plan for " +
+    selectedPlan.duration_days +
+    " days?"
+  );
+
+  if (!confirmed) return;
+
+  investButton.disabled = true;
+  investButton.textContent = "Processing...";
+
+  statusMessage.textContent =
+    "Investment processing...";
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/investment-create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          amount: amount
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Investment failed"
+      );
+    }
+
+    alert("Investment submitted successfully!");
+
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    statusMessage.textContent = error.message;
+
+    investButton.disabled = false;
+    investButton.textContent = "Confirm Investment";
+  }
+});
+
+loadProfile();
+loadPlans();
+</script>
+
+</body>
+</html>
