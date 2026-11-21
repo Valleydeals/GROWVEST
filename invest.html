@@ -310,6 +310,8 @@ async function loadProfile() {
   if (!token) {
     document.getElementById("walletBalance").textContent =
       "Login required";
+
+    window.location.href = "login.html";
     return;
   }
 
@@ -317,27 +319,36 @@ async function loadProfile() {
     const response = await fetch(
       "/.netlify/functions/profile",
       {
+        method: "GET",
         headers: {
           Authorization: "Bearer " + token
         }
       }
     );
 
-    if (!response.ok) return;
-
     const data = await response.json();
 
-    walletBalance =
-      Number(data.wallet?.balance || data.balance || 0);
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Unable to load wallet balance."
+      );
+    }
+
+    walletBalance = Number(data.user?.balance || 0);
 
     document.getElementById("walletBalance").textContent =
       formatMoney(walletBalance);
 
   } catch (error) {
     console.error("Profile loading error:", error);
+
+    document.getElementById("walletBalance").textContent =
+      "Unable to load balance";
+
+    statusMessage.textContent =
+      "Unable to load your wallet. Refresh the page.";
   }
 }
-
 async function loadPlans() {
   try {
     const response = await fetch(
