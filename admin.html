@@ -435,29 +435,65 @@ th {
   </div>
 
   <!-- INVESTMENTS -->
-  <div class="section" id="investments">
-    <div class="content-card">
-      <h2>User Investments</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Plan</th>
-              <th>Amount</th>
-              <th>Daily Rate</th>
-              <th>Status</th>
-              <th>Start Date</th>
-            </tr>
-          </thead>
-          <tbody id="investmentsTable">
-            <tr><td colspan="6">Investments will load here.</td></tr>
-          </tbody>
-        </table>
-      </div>
+<div class="section" id="investments">
+
+  <div class="stats">
+
+    <div class="stat-card">
+      <p>Total Invested</p>
+      <h2 id="investmentTotal">KSh 0</h2>
     </div>
+
+    <div class="stat-card">
+      <p>Active Investments</p>
+      <h2 id="investmentActiveCount">0</h2>
+    </div>
+
+    <div class="stat-card">
+      <p>Completed Investments</p>
+      <h2 id="investmentCompletedCount">0</h2>
+    </div>
+
+    <div class="stat-card">
+      <p>Total Records</p>
+      <h2 id="investmentRecordCount">0</h2>
+    </div>
+
   </div>
 
+  <div class="content-card">
+    <h2>User Investments</h2>
+
+    <input
+      class="search"
+      id="investmentSearch"
+      placeholder="Search user, phone or plan..."
+    >
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Plan</th>
+            <th>Amount</th>
+            <th>Daily Rate</th>
+            <th>Status</th>
+            <th>Start Date</th>
+          </tr>
+        </thead>
+
+        <tbody id="investmentsTable">
+          <tr>
+            <td colspan="6">Investments will load here.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
   <!-- PLANS -->
   
 <div class="section" id="plans">
