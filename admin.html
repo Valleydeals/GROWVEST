@@ -485,12 +485,16 @@ th {
 
 
   <!-- SETTINGS -->
-  <div class="section" id="settings">
-    <div class="content-card">
-      <h2>Platform Settings</h2>
-      <p class="loading">Platform controls will be connected next.</p>
+  
+<div class="section" id="settings">
+  <div class="content-card">
+    <h2>Platform Settings</h2>
+
+    <div id="settingsContent">
+      <p class="loading">Settings will load here.</p>
     </div>
   </div>
+</div>
 
   <!-- TRANSACTIONS -->
   <div class="section" id="transactions">
@@ -555,6 +559,9 @@ function showSection(sectionId, button) {
 
   document.getElementById("pageTitle").textContent =
     titles[sectionId] || "GrowVest Admin";
+    if (sectionId === "settings") {
+  loadAdminSettings();
+}
     if (sectionId === "plans") {
   loadAdminPlans();
 }
@@ -823,6 +830,94 @@ async function loadAdminPlans() {
 
     tbody.innerHTML = `
       <tr><td colspan="6">Failed to load plans.</td></tr>
+    `;
+  }
+}
+
+async function loadAdminSettings() {
+  const container = document.getElementById("settingsContent");
+
+  container.innerHTML = `<p class="loading">Loading settings...</p>`;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-settings",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.settings) {
+      container.innerHTML = `
+        <p>No platform settings record was found.</p>
+      `;
+      return;
+    }
+
+    const s = data.settings;
+
+    container.innerHTML = `
+      <div style="display:grid;gap:15px">
+
+        <div class="stat-card">
+          <p>Configured Daily Rate</p>
+          <h2>${Number(s.daily_rate || 0)}%</h2>
+          <small>
+            This is a configured rate, not a guarantee of investment returns.
+          </small>
+        </div>
+
+        <div class="stat-card">
+          <p>Minimum Investment</p>
+          <h2>${formatMoney(s.min_investment || 0)}</h2>
+        </div>
+
+        <div class="stat-card">
+          <p>Maximum Investment</p>
+          <h2>${formatMoney(s.max_investment || 0)}</h2>
+        </div>
+
+        <div class="stat-card">
+          <p>Investment Duration</p>
+          <h2>${Number(s.duration_days || 0)} days</h2>
+        </div>
+
+        <div class="stat-card">
+          <p>Referral Bonus</p>
+          <h2>${formatMoney(s.referral_bonus || 0)}</h2>
+        </div>
+
+        <div class="stat-card">
+          <p>Investments</p>
+          <h2>${s.investments_enabled ? "Enabled" : "Disabled"}</h2>
+        </div>
+
+        <div class="stat-card">
+          <p>Withdrawals</p>
+          <h2>${s.withdrawals_enabled ? "Enabled" : "Disabled"}</h2>
+        </div>
+
+      </div>
+    `;
+
+  } catch (error) {
+    console.error("Settings loading error:", error);
+
+    container.innerHTML = `
+      <p>Failed to load platform settings.</p>
     `;
   }
 }
