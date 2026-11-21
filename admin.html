@@ -536,6 +536,9 @@ function showSection(sectionId, button) {
     if (sectionId === "users") {
   loadAdminUsers();
 }
+if (sectionId === "deposits") {
+  loadAdminDeposits();
+}
 
   if (window.innerWidth <= 650) {
     document.getElementById("sidebar").classList.remove("open");
@@ -552,6 +555,69 @@ function formatMoney(amount) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+}
+
+async function loadAdminDeposits() {
+  const tbody = document.getElementById("depositsTable");
+
+  tbody.innerHTML = `
+    <tr><td colspan="6">Loading deposits...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-deposits",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.deposits.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="6">No deposits found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.deposits.map(deposit => `
+      <tr>
+        <td>${escapeHTML(deposit.full_name || "Unknown")}</td>
+        <td>${formatMoney(deposit.amount)}</td>
+        <td>${escapeHTML(deposit.phone || "-")}</td>
+        <td>${escapeHTML(deposit.payment_reference || "-")}</td>
+        <td>
+          <span class="status">
+            ${escapeHTML(deposit.status || "-")}
+          </span>
+        </td>
+        <td>
+          ${deposit.created_at
+            ? new Date(deposit.created_at).toLocaleString()
+            : "-"}
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Deposits loading error:", error);
+
+    tbody.innerHTML = `
+      <tr><td colspan="6">Failed to load deposits.</td></tr>
+    `;
+  }
 }
 
 async function loadAdminStats() {
