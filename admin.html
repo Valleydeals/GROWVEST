@@ -690,7 +690,77 @@ async function loadAdminDeposits() {
     `;
   }
 }
+async function loadAdminInvestments() {
+  const tbody = document.getElementById("investmentsTable");
 
+  tbody.innerHTML = `
+    <tr><td colspan="6">Loading investments...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-investments",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.investments.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="6">No investments found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.investments.map(item => `
+      <tr>
+        <td>
+          ${escapeHTML(item.full_name || "Unknown")}
+          <br>
+          <small>${escapeHTML(item.phone || "-")}</small>
+        </td>
+
+        <td>${escapeHTML(item.plan_name || "-")}</td>
+
+        <td>${formatMoney(item.amount)}</td>
+
+        <td>${Number(item.daily_rate || 0)}%</td>
+
+        <td>
+          <span class="status">
+            ${escapeHTML(item.status || "-")}
+          </span>
+        </td>
+
+        <td>
+          ${item.start_date
+            ? new Date(item.start_date).toLocaleDateString()
+            : "-"}
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Investments loading error:", error);
+
+    tbody.innerHTML = `
+      <tr><td colspan="6">Failed to load investments.</td></tr>
+    `;
+  }
+}
 async function loadAdminWithdrawals() {
   const tbody = document.getElementById("withdrawalsTable");
 
