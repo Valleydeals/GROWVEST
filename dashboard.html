@@ -511,16 +511,16 @@ async function loadDashboard() {
             formatMoney(user.balance);
 
         document.getElementById("activeInvestments").textContent =
-            formatMoney(stats.active_investments);
+    formatMoney(stats.activeInvestments);
 
-        document.getElementById("totalDeposits").textContent =
-            formatMoney(stats.total_deposits);
+document.getElementById("totalDeposits").textContent =
+    formatMoney(stats.totalDeposits);
 
-        document.getElementById("referralRewards").textContent =
-            formatMoney(stats.referral_rewards);
+document.getElementById("referralRewards").textContent =
+    formatMoney(stats.referralRewards);
 
-        document.getElementById("totalWithdrawals").textContent =
-            formatMoney(stats.total_withdrawals);
+document.getElementById("totalWithdrawals").textContent =
+    formatMoney(stats.totalWithdrawals);
 
         document.getElementById("referralCode").value =
             user.referral_code || "";
