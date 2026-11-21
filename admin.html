@@ -559,6 +559,9 @@ function showSection(sectionId, button) {
 
   document.getElementById("pageTitle").textContent =
     titles[sectionId] || "GrowVest Admin";
+    if (sectionId === "transactions") {
+  loadAdminTransactions();
+}
     if (sectionId === "settings") {
   loadAdminSettings();
 }
@@ -918,6 +921,67 @@ async function loadAdminSettings() {
 
     container.innerHTML = `
       <p>Failed to load platform settings.</p>
+    `;
+  }
+}
+
+async function loadAdminTransactions() {
+  const tbody = document.getElementById("transactionsTable");
+
+  tbody.innerHTML = `
+    <tr><td colspan="6">Loading transactions...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-transactions",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.transactions.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="6">No transactions found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.transactions.map(tx => `
+      <tr>
+        <td>${escapeHTML(tx.full_name || "Unknown")}</td>
+        <td>${escapeHTML(tx.transaction_type || "-")}</td>
+        <td>${formatMoney(tx.amount)}</td>
+        <td>${escapeHTML(tx.reference || "-")}</td>
+        <td>
+          <span class="status">${escapeHTML(tx.status || "-")}</span>
+        </td>
+        <td>
+          ${tx.created_at
+            ? new Date(tx.created_at).toLocaleString()
+            : "-"}
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Transactions loading error:", error);
+
+    tbody.innerHTML = `
+      <tr><td colspan="6">Failed to load transactions.</td></tr>
     `;
   }
 }
