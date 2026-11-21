@@ -74,15 +74,7 @@ exports.handler = async (event) => {
     }
 
     // Current testing mode: non-zero earnings rates are not enabled.
-    if (rate !== 0) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          message: "Non-zero rates are currently disabled during testing."
-        })
-      };
-    }
+   
 
     const result = await pool.query(
       `UPDATE investment_plans
