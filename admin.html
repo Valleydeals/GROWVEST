@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowVest Admin</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7f5;
+  color: #17251e;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #102c20;
+  color: white;
+  padding: 25px 18px;
+  overflow-y: auto;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  color: #37c878;
+  margin-bottom: 35px;
+}
+
+.logo span {
+  color: white;
+}
+
+.sidebar h4 {
+  font-size: 11px;
+  color: #8ba99a;
+  margin: 20px 10px 10px;
+  letter-spacing: 1px;
+}
+
+.nav-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #d1e0d7;
+  text-align: left;
+  padding: 13px 12px;
+  margin: 3px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: #214c36;
+  color: white;
+}
+
+.main {
+  margin-left: 250px;
+  padding: 25px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.topbar h1 {
+  font-size: 25px;
+}
+
+.admin-badge {
+  background: #e0f5e8;
+  color: #168347;
+  padding: 9px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+}
+
+.stat-card p {
+  color: #718078;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.stat-card h2 {
+  font-size: 23px;
+  color: #173c27;
+}
+
+.content-card {
+  background: white;
+  border-radius: 13px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+}
+
+.content-card h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  padding: 13px 10px;
+  text-align: left;
+  border-bottom: 1px solid #edf1ee;
+  font-size: 13px;
+}
+
+th {
+  color: #66756c;
+  background: #f8faf9;
+}
+
+.status {
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #fff3d8;
+  color: #986800;
+}
+
+.primary-btn {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 11px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.danger-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.search {
+  width: 100%;
+  max-width: 350px;
+  padding: 12px;
+  border: 1px solid #dce5df;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.loading {
+  color: #6b7c72;
+  padding: 20px 0;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+@media(max-width:900px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width:650px) {
+  .sidebar {
+    width: 220px;
+    transform: translateX(-100%);
+    transition: 0.3s;
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .mobile-menu {
+    display: block;
+    background: #102c20;
+    color: white;
+    border: none;
+    padding: 10px 13px;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-card h2 {
+    font-size: 19px;
+  }
+
+  .topbar h1 {
+    font-size: 21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar" id="sidebar">
+
+  <div class="logo">GROW<span>VEST</span></div>
+
+  <h4>MAIN MENU</h4>
+
+  <button class="nav-btn active" onclick="showSection('overview',this)">📊 Overview</button>
+  <button class="nav-btn" onclick="showSection('users',this)">👥 Users</button>
+  <button class="nav-btn" onclick="showSection('deposits',this)">💰 Deposits</button>
+  <button class="nav-btn" onclick="showSection('withdrawals',this)">💸 Withdrawals</button>
+  <button class="nav-btn" onclick="showSection('investments',this)">📈 Investments</button>
+
+  <h4>MANAGEMENT</h4>
+
+  <button class="nav-btn" onclick="showSection('plans',this)">📋 Investment Plans</button>
+  <button class="nav-btn" onclick="showSection('settings',this)">⚙️ Platform Settings</button>
+  <button class="nav-btn" onclick="showSection('transactions',this)">🔄 Transactions</button>
+
+  <h4>ACCOUNT</h4>
+
+  <button class="nav-btn" onclick="logoutAdmin()">🚪 Logout</button>
+
+</div>
+
+<div class="main">
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+      <h1 id="pageTitle">Admin Overview</h1>
+    </div>
+
+    <div class="admin-badge">Administrator</div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="overview">
+
+    <div class="stats">
+
+      <div class="stat-card">
+        <p>Total Users</p>
+        <h2 id="totalUsers">0</h2>
+      </div>
+
+      <div class="stat-card">
+        <p>Total Deposits</p>
+        <h2 id="totalDeposits">KSh 0</h2>
+      </div>
+
+      <div class="stat-card">
+        <p>Pending Withdrawals</p>
+        <h2 id="pendingWithdrawals">0</h2>
+      </div>
+
+      <div class="stat-card">
+        <p>Active Investments</p>
+        <h2 id="activeInvestments">KSh 0</h2>
+      </div>
+
+    </div>
+
+    <div class="content-card">
+      <h2>Platform Overview</h2>
+      <p class="loading" id="overviewStatus">
+        Admin dashboard ready. Backend statistics will be connected next.
+      </p>
+    </div>
+
+    <div class="content-card">
+      <h2>Recent Transactions</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>User</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+
+          <tbody id="recentTransactions">
+            <tr>
+              <td colspan="6">Transactions will appear here.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- USERS -->
+  <div class="section" id="users">
+    <div class="content-card">
+      <h2>Registered Users</h2>
+      <input class="search" placeholder="Search users..." id="userSearch">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable">
+            <tr><td colspan="5">Users will load here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPOSITS -->
+  <div class="section" id="deposits">
+    <div class="content-card">
+      <h2>Deposit Records</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Phone</th>
+              <th>Reference</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="depositsTable">
+            <tr><td colspan="6">Deposits will load here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- WITHDRAWALS -->
+  <div class="section" id="withdrawals">
+    <div class="content-card">
+      <h2>Withdrawal Requests</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Phone</th>
+              <th>Reference</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="withdrawalsTable">
+            <tr><td colspan="7">Withdrawals will load here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVESTMENTS -->
+  <div class="section" id="investments">
+    <div class="content-card">
+      <h2>User Investments</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Plan</th>
+              <th>Amount</th>
+              <th>Daily Rate</th>
+              <th>Status</th>
+              <th>Start Date</th>
+            </tr>
+          </thead>
+          <tbody id="investmentsTable">
+            <tr><td colspan="6">Investments will load here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="section" id="plans">
+    <div class="content-card">
+      <h2>Investment Plans</h2>
+      <p class="loading">Plan management will be connected next.</p>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="section" id="settings">
+    <div class="content-card">
+      <h2>Platform Settings</h2>
+      <p class="loading">Platform controls will be connected next.</p>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="section" id="transactions">
+    <div class="content-card">
+      <h2>All Transactions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Reference</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsTable">
+            <tr><td colspan="6">Transactions will load here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const adminToken = localStorage.getItem("growvest_admin_token");
+
+if (!adminToken) {
+  window.location.href = "admin-login.html";
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+function showSection(sectionId, button) {
+
+  document.querySelectorAll(".section").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document.getElementById(sectionId).classList.add("active");
+
+  if (button) button.classList.add("active");
+
+  const titles = {
+    overview: "Admin Overview",
+    users: "Registered Users",
+    deposits: "Deposits",
+    withdrawals: "Withdrawals",
+    investments: "Investments",
+    plans: "Investment Plans",
+    settings: "Platform Settings",
+    transactions: "Transactions"
+  };
+
+  document.getElementById("pageTitle").textContent =
+    titles[sectionId] || "GrowVest Admin";
+
+  if (window.innerWidth <= 650) {
+    document.getElementById("sidebar").classList.remove("open");
+  }
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("growvest_admin_token");
+  window.location.href = "admin-login.html";
+}
+
+</script>
+
+</body>
+</html>
