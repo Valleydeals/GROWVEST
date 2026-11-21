@@ -434,86 +434,164 @@ Already have an account?
 <footer>
 © <span id="year"></span> GROWVEST. All rights reserved.
 </footer>
-
 <script>
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+function togglePassword(id, button) {
+  const input = document.getElementById(id);
+
+  if (input.type === "password") {
+    input.type = "text";
+    button.textContent = "Hide";
+  } else {
+    input.type = "password";
+    button.textContent = "Show";
+  }
+}
+
 const registerForm = document.getElementById("registerForm");
+const submitBtn = document.getElementById("submitBtn");
+const messageBox = document.getElementById("message");
+
+function showMessage(message, type) {
+  messageBox.textContent = message;
+  messageBox.className = "message " + type;
+  messageBox.style.display = "block";
+
+  messageBox.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
 
 registerForm.addEventListener("submit", async function(e) {
   e.preventDefault();
 
-  const fullName = document.getElementById("fullName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const fullName = document.getElementById("fullname").value.trim();
+  let phone = document.getElementById("phone").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
-  const referralCode = document.getElementById("referralCode").value.trim();
+  const referralCode = document.getElementById("referral").value.trim();
   const terms = document.getElementById("terms").checked;
 
-  if (password !== confirmPassword) {
-    alert("Passwords do not match.");
+  messageBox.style.display = "none";
+
+  if (!fullName) {
+    showMessage("Please enter your full name.", "error");
     return;
   }
 
+  if (!phone) {
+    showMessage("Please enter your phone number.", "error");
+    return;
+  }
+
+  // Normalize Kenyan phone number
+  phone = phone.replace(/\s+/g, "");
+
+  if (phone.startsWith("+254")) {
+    phone = phone.substring(4);
+  } else if (phone.startsWith("254")) {
+    phone = phone.substring(3);
+  } else if (phone.startsWith("0")) {
+    phone = phone.substring(1);
+  }
+
+  if (!/^[17]\d{8}$/.test(phone)) {
+    showMessage(
+      "Enter a valid Kenyan phone number, e.g. 712345678.",
+      "error"
+    );
+    return;
+  }
+
+  // Send full international number to backend
+  phone = "+254" + phone;
+
   if (password.length < 8) {
-    alert("Password must be at least 8 characters.");
+    showMessage(
+      "Password must be at least 8 characters long.",
+      "error"
+    );
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showMessage("Passwords do not match.", "error");
     return;
   }
 
   if (!terms) {
-    alert("Please accept the Terms and Conditions.");
+    showMessage(
+      "Please accept the Terms and Conditions.",
+      "error"
+    );
     return;
   }
 
-  const submitButton = registerForm.querySelector('button[type="submit"]');
-
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.textContent = "Creating account...";
-  }
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Creating account...";
 
   try {
-    const response = await fetch("/.netlify/functions/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        fullName,
-        phone,
-        email,
-        password,
-        referralCode
-      })
-    });
+    const response = await fetch(
+      "/.netlify/functions/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fullName: fullName,
+          phone: phone,
+          email: email,
+          password: password,
+          referralCode: referralCode
+        })
+      }
+    );
 
     const data = await response.json();
 
     if (!response.ok) {
-      alert(data.message || "Registration failed.");
+      showMessage(
+        data.message || "Registration failed.",
+        "error"
+      );
       return;
     }
 
-    // Save authentication token
-    localStorage.setItem("growvest_token", data.token);
+    localStorage.setItem(
+      "growvest_token",
+      data.token
+    );
 
-    // Save basic user information
     localStorage.setItem(
       "growvest_user",
       JSON.stringify(data.user)
     );
 
-    alert("Account created successfully!");
+    showMessage(
+      "Account created successfully! Redirecting to login...",
+      "success"
+    );
 
-    window.location.href = "login.html";
+    setTimeout(function() {
+      window.location.href = "login.html";
+    }, 1500);
 
   } catch (error) {
-    console.error(error);
-    alert("Unable to connect. Please try again.");
+    console.error("Registration error:", error);
+
+    showMessage(
+      "Unable to connect to the server. Please try again.",
+      "error"
+    );
+
   } finally {
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.textContent = "Create Account";
-    }
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Create Account";
   }
 });
 </script>
