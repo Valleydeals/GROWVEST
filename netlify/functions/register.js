@@ -96,14 +96,16 @@ if (cleanPhone.startsWith("+254")) {
 
     await client.query("BEGIN");
 
-    // Check existing account
-    const existing = await client.query(
-      `SELECT id FROM users
-       WHERE phone = $1 OR
-       ($2 IS NOT NULL AND email = $2)`,
-      [cleanPhone, cleanEmail]
-    );
-
+   // Check existing account
+const existing = await client.query(
+  `SELECT id FROM users
+   WHERE phone = $1
+   OR (
+     $2::text IS NOT NULL
+     AND email = $2::text
+   )`,
+  [cleanPhone, cleanEmail]
+);
     if (existing.rows.length > 0) {
       await client.query("ROLLBACK");
 
