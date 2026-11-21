@@ -1467,26 +1467,8 @@ document.getElementById("userSearch").addEventListener("input", function() {
   loadAdminUsers(this.value);
 });
 function filterInvestments() {
-  const search = document.getElementById("investmentSearch").value.toLowerCase();
-  const status = document.getElementById("investmentStatusFilter").value;
-
-  const rows = document.querySelectorAll("#investmentsTable tr");
-
-  rows.forEach(row => {
-    const text = row.textContent.toLowerCase();
-
-    const matchesSearch = text.includes(search);
-
-    const rowStatus = row.querySelector(".status")?.textContent
-      .trim()
-      .toLowerCase() || "";
-
-    const matchesStatus =
-      status === "all" || rowStatus === status;
-
-    row.style.display =
-      matchesSearch && matchesStatus ? "" : "none";
-  });
+  investmentCurrentPage = 1;
+  renderInvestmentTable();
 }
 
 document.getElementById("investmentSearch")
@@ -1494,7 +1476,19 @@ document.getElementById("investmentSearch")
 
 document.getElementById("investmentStatusFilter")
   .addEventListener("change", filterInvestments);
+document.getElementById("investmentPrevBtn")
+  .addEventListener("click", function() {
+    if (investmentCurrentPage > 1) {
+      investmentCurrentPage--;
+      renderInvestmentTable();
+    }
+  });
 
+document.getElementById("investmentNextBtn")
+  .addEventListener("click", function() {
+    investmentCurrentPage++;
+    renderInvestmentTable();
+  });
 </script>
 
 </body>
