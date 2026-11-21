@@ -172,15 +172,17 @@ exports.handler = async (event) => {
 
         // STORE PROVIDER REFERENCE IF RETURNED
         const providerReference =
-            paymentData.checkout_id ||
-            paymentData.checkoutRequestId ||
-            paymentData.transaction_id ||
-            paymentData.reference ||
-            paymentData.id ||
-            paymentData.data?.checkout_id ||
-            paymentData.data?.transaction_id ||
-            null;
-
+    paymentData.checkoutRequestId ||
+    paymentData.checkout_request_id ||
+    paymentData.checkout_id ||
+    paymentData.transaction_id ||
+    paymentData.reference ||
+    paymentData.id ||
+    paymentData.data?.checkoutRequestId ||
+    paymentData.data?.checkout_request_id ||
+    paymentData.data?.checkout_id ||
+    paymentData.data?.transaction_id ||
+    null;
         await client.query(
             `UPDATE deposits
              SET provider_reference = $1

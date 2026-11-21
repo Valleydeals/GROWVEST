@@ -361,10 +361,8 @@ footer {
     © <span id="year"></span> GrowVest. Grow Your Future.
 </footer>
 
-<script>
 
-document.getElementById("year").textContent =
-    new Date().getFullYear();
+<script>
 
 const token = localStorage.getItem("growvest_token");
 
@@ -372,120 +370,185 @@ if (!token) {
     window.location.href = "login.html";
 }
 
-function formatMoney(amount) {
-    return "KSh " + Number(amount || 0).toLocaleString(
-        "en-KE",
-        {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+const form = document.getElementById("depositForm");
+const button = document.getElementById("depositBtn");
+const messageBox = document.getElementById("message");
+
+let checkingPayment = false;
+
+function showMessage(message, type) {
+    messageBox.textContent = message;
+    messageBox.className = "message " + type;
+    messageBox.style.display = "block";
+}
+
+function normalizePhone(phone) {
+
+    phone = phone.replace(/\s+/g, "");
+
+    if (phone.startsWith("+254")) {
+        return phone;
+    }
+
+    if (phone.startsWith("254")) {
+        return "+" + phone;
+    }
+
+    if (phone.startsWith("0")) {
+        return "+254" + phone.substring(1);
+    }
+
+    return phone;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function checkPaymentStatus(reference) {
+
+    // Maximum 12 checks, 5 seconds apart
+    for (let attempt = 1; attempt <= 12; attempt++) {
+
+        await sleep(5000);
+
+        try {
+
+            const response = await fetch(
+                "/.netlify/functions/payment-status",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        reference: reference
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to check payment status."
+                );
+            }
+
+            const status = String(data.status || "").toLowerCase();
+
+            if (status === "completed") {
+
+                showMessage(
+                    "Payment successful! Your wallet has been credited.",
+                    "success"
+                );
+
+                button.textContent = "Payment Completed";
+                form.reset();
+
+                return;
+            }
+
+            if (status === "failed") {
+
+                showMessage(
+                    "Payment failed. Please try again.",
+                    "error"
+                );
+
+                return;
+            }
+
+            if (status === "cancelled") {
+
+                showMessage(
+                    "Payment was cancelled. You can try again.",
+                    "error"
+                );
+
+                return;
+            }
+
+            showMessage(
+                "Waiting for payment... Please complete the M-Pesa prompt on your phone.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error("Status check error:", error);
+
+            showMessage(
+                "Payment initiated. We are checking its status...",
+                "success"
+            );
         }
+    }
+
+    showMessage(
+        "We haven't received confirmation yet. If you paid, please wait and check your dashboard before making another deposit.",
+        "success"
     );
 }
 
-function logout() {
-    localStorage.removeItem("growvest_token");
-    localStorage.removeItem("growvest_user");
+form.addEventListener("submit", async function(e) {
 
-    window.location.href = "login.html";
-}
+    e.preventDefault();
 
-function showError(message) {
-    const box = document.getElementById("errorMessage");
+    if (checkingPayment) return;
 
-    box.textContent = message;
-    box.style.display = "block";
-}
+    const amount = Number(
+        document.getElementById("amount").value
+    );
 
-function hideError() {
-    document.getElementById("errorMessage").style.display = "none";
-}
+    const phone = normalizePhone(
+        document.getElementById("phone").value
+    );
 
-function copyReferralCode() {
-    const code = document.getElementById("referralCode").value;
+    if (!Number.isInteger(amount) || amount < 1) {
 
-    if (!code) {
+        showMessage(
+            "Enter a valid deposit amount.",
+            "error"
+        );
+
         return;
     }
 
-    navigator.clipboard.writeText(code)
-        .then(() => {
-            document.getElementById("referralMessage")
-                .textContent = "Referral code copied successfully!";
-        })
-        .catch(() => {
-            document.getElementById("referralCode").select();
+    if (!/^(\+2547\d{8}|\+2541\d{8})$/.test(phone)) {
 
-            document.execCommand("copy");
+        showMessage(
+            "Enter a valid Kenyan M-Pesa number.",
+            "error"
+        );
 
-            document.getElementById("referralMessage")
-                .textContent = "Referral code copied!";
-        });
-}
-
-function renderTransactions(transactions) {
-    const container = document.getElementById("transactionsList");
-
-    if (!transactions || transactions.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <h3>No transactions yet</h3>
-                <p>Your transactions will appear here.</p>
-            </div>
-        `;
         return;
     }
 
-    container.innerHTML = "";
+    checkingPayment = true;
 
-    transactions.forEach(transaction => {
+    button.disabled = true;
+    button.textContent = "Initiating payment...";
 
-        const type = transaction.transaction_type || "Transaction";
-
-        const amount = Number(transaction.amount || 0);
-
-        const isPositive = [
-            "deposit",
-            "referral_bonus",
-            "investment_return"
-        ].includes(type.toLowerCase());
-
-        const item = document.createElement("div");
-
-        item.className = "transaction";
-
-        item.innerHTML = `
-            <div class="transaction-info">
-                <h4>${type.replace(/_/g, " ")}</h4>
-                <p>${transaction.description || ""}</p>
-                <p>${transaction.created_at
-                    ? new Date(transaction.created_at).toLocaleString()
-                    : ""}</p>
-                <p class="status">Status: ${transaction.status || "pending"}</p>
-            </div>
-
-            <div class="amount ${isPositive ? "positive" : "negative"}">
-                ${isPositive ? "+" : "-"}${formatMoney(amount)}
-            </div>
-        `;
-
-        container.appendChild(item);
-    });
-}
-
-async function loadDashboard() {
+    messageBox.style.display = "none";
 
     try {
 
-        hideError();
-
+        // Initiate STK Push
         const response = await fetch(
-            "/.netlify/functions/profile",
+            "/.netlify/functions/deposit",
             {
-                method: "GET",
+                method: "POST",
                 headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
-                }
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    amount,
+                    phone
+                })
             }
         );
 
@@ -493,65 +556,50 @@ async function loadDashboard() {
 
         if (!response.ok) {
 
-            if (response.status === 401) {
-                logout();
-                return;
-            }
-
-            throw new Error(data.message || "Unable to load dashboard.");
+            throw new Error(
+                data.message || "Deposit request failed."
+            );
         }
 
-        const user = data.user || {};
-        const stats = data.statistics || {};
+        if (!data.reference) {
 
-        document.getElementById("welcomeName").textContent =
-            user.full_name || "User";
+            throw new Error(
+                "Payment reference was not returned."
+            );
+        }
 
-        document.getElementById("balance").textContent =
-            formatMoney(user.balance);
-
-        document.getElementById("activeInvestments").textContent =
-            formatMoney(stats.active_investments);
-
-        document.getElementById("totalDeposits").textContent =
-            formatMoney(stats.total_deposits);
-
-        document.getElementById("referralRewards").textContent =
-            formatMoney(stats.referral_rewards);
-
-        document.getElementById("totalWithdrawals").textContent =
-            formatMoney(stats.total_withdrawals);
-
-        document.getElementById("referralCode").value =
-            user.referral_code || "";
-
-        localStorage.setItem(
-            "growvest_user",
-            JSON.stringify(user)
+        showMessage(
+            "STK Push sent! Enter your M-Pesa PIN on your phone. Waiting for confirmation...",
+            "success"
         );
 
-        renderTransactions(data.transactions || []);
+        button.textContent = "Waiting for payment...";
+
+        // Automatically poll payment status
+        await checkPaymentStatus(data.reference);
 
     } catch (error) {
 
-        console.error("Dashboard error:", error);
-
-        showError(
-            error.message || "Could not connect to the server."
+        showMessage(
+            error.message || "Unable to initiate payment.",
+            "error"
         );
 
-        document.getElementById("transactionsList").innerHTML = `
-            <div class="empty-state">
-                <h3>Unable to load transactions</h3>
-                <p>Please refresh the page.</p>
-            </div>
-        `;
-    }
-}
+    } finally {
 
-loadDashboard();
+        checkingPayment = false;
+        button.disabled = false;
+
+        if (button.textContent !== "Payment Completed") {
+            button.textContent = "Deposit via M-Pesa";
+        }
+    }
+
+});
 
 </script>
+
+
 
 </body>
 </html>
