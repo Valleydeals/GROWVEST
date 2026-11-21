@@ -1,4 +1,3 @@
-
 const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 
@@ -45,8 +44,8 @@ exports.handler = async (event) => {
       SELECT
         id,
         name,
-        min_amount,
-        max_amount,
+        minimum_amount AS min_amount,
+        maximum_amount AS max_amount,
         daily_rate,
         duration_days,
         is_active
@@ -70,9 +69,12 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 500,
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         success: false,
-        message: "Unable to retrieve investment plans"
+        message: error.message || "Unable to retrieve investment plans"
       })
     };
 
