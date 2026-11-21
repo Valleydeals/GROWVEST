@@ -455,12 +455,34 @@ th {
   </div>
 
   <!-- PLANS -->
-  <div class="section" id="plans">
-    <div class="content-card">
-      <h2>Investment Plans</h2>
-      <p class="loading">Plan management will be connected next.</p>
+  
+<div class="section" id="plans">
+  <div class="content-card">
+    <h2>Investment Plans</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Plan Name</th>
+            <th>Minimum</th>
+            <th>Maximum</th>
+            <th>Rate</th>
+            <th>Duration</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="plansTable">
+          <tr>
+            <td colspan="6">Plans will load here.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
+
 
   <!-- SETTINGS -->
   <div class="section" id="settings">
@@ -533,6 +555,9 @@ function showSection(sectionId, button) {
 
   document.getElementById("pageTitle").textContent =
     titles[sectionId] || "GrowVest Admin";
+    if (sectionId === "plans") {
+  loadAdminPlans();
+}
     if (sectionId === "withdrawals") {
   loadAdminWithdrawals();
 }
@@ -740,6 +765,65 @@ async function handleWithdrawalAction(withdrawalId, action) {
   } catch (error) {
     console.error(error);
     alert("Unable to process action. Please try again.");
+  }
+}
+
+async function loadAdminPlans() {
+  const tbody = document.getElementById("plansTable");
+
+  tbody.innerHTML = `
+    <tr><td colspan="6">Loading investment plans...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-plans",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.plans.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="6">No investment plans found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.plans.map(plan => `
+      <tr>
+        <td>${escapeHTML(plan.name)}</td>
+        <td>${formatMoney(plan.min_amount)}</td>
+        <td>${formatMoney(plan.max_amount)}</td>
+        <td>${Number(plan.daily_rate)}%</td>
+        <td>${Number(plan.duration_days)} days</td>
+        <td>
+          <span class="status">
+            ${plan.is_active ? "Active" : "Inactive"}
+          </span>
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Plans loading error:", error);
+
+    tbody.innerHTML = `
+      <tr><td colspan="6">Failed to load plans.</td></tr>
+    `;
   }
 }
 
