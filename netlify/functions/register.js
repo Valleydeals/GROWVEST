@@ -67,18 +67,18 @@ exports.handler = async (event) => {
 
     let cleanPhone = phone.replace(/\s+/g, "");
 
-    if (cleanPhone.startsWith("0")) {
-      cleanPhone = "+254" + cleanPhone.substring(1);
-    } else if (cleanPhone.startsWith("254")) {
-      cleanPhone = "+" + cleanPhone;
-    }
-
-    if (!/^\+254\d{9}$/.test(cleanPhone)) {
-      return response(400, {
-        message: "Enter a valid Kenyan phone number."
-      });
-    }
-
+if (cleanPhone.startsWith("+254")) {
+  // Already international format
+} else if (cleanPhone.startsWith("254")) {
+  cleanPhone = "+" + cleanPhone;
+} else if (
+  cleanPhone.length === 9 &&
+  /^[17]/.test(cleanPhone)
+) {
+  cleanPhone = "+254" + cleanPhone;
+} else if (cleanPhone.startsWith("0")) {
+  cleanPhone = "+254" + cleanPhone.substring(1);
+}
     const cleanEmail = email
       ? email.trim().toLowerCase()
       : null;
