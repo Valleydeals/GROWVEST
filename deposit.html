@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrowVest Dashboard</title>
+<title>GrowVest - Deposit</title>
 
 <style>
 * {
@@ -37,187 +37,90 @@ header {
     color: #a7f3d0;
 }
 
-header button {
-    background: #dc2626;
+header a {
     color: white;
-    border: none;
+    text-decoration: none;
+    background: #047857;
     padding: 10px 15px;
     border-radius: 7px;
-    cursor: pointer;
 }
 
 .container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 25px 15px;
+    max-width: 600px;
+    margin: 35px auto;
+    padding: 15px;
 }
 
-.welcome {
-    margin-bottom: 25px;
-}
-
-.welcome h1 {
-    font-size: 26px;
-    margin-bottom: 8px;
-}
-
-.welcome p {
-    color: #64748b;
-}
-
-.balance-card {
-    background: linear-gradient(135deg, #064e3b, #059669);
-    color: white;
+.card {
+    background: white;
     padding: 25px;
-    border-radius: 18px;
-    margin-bottom: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
-.balance-card p {
-    opacity: 0.85;
+.card h1 {
     margin-bottom: 10px;
-}
-
-.balance-card h2 {
-    font-size: 35px;
-    margin-bottom: 22px;
-}
-
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.actions a {
-    text-decoration: none;
-    background: white;
-    color: #065f46;
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.actions a:hover {
-    opacity: 0.85;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
-}
-
-.stat-card p {
-    color: #64748b;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
-
-.stat-card h2 {
-    font-size: 22px;
     color: #064e3b;
 }
 
-.section {
-    background: white;
-    padding: 22px;
-    border-radius: 14px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+.subtitle {
+    color: #64748b;
+    margin-bottom: 25px;
+    line-height: 1.5;
 }
 
-.section h2 {
-    margin-bottom: 18px;
-    font-size: 20px;
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
 }
 
-.referral-box {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.referral-box input {
-    flex: 1;
-    min-width: 150px;
-    padding: 12px;
+input {
+    width: 100%;
+    padding: 14px;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: #f9fafb;
+    border-radius: 9px;
+    margin-bottom: 20px;
+    font-size: 16px;
 }
 
-.referral-box button {
+input:focus {
+    outline: none;
+    border-color: #059669;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
     background: #059669;
     color: white;
     border: none;
-    padding: 12px 18px;
-    border-radius: 8px;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
 }
 
-.transaction {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+button:hover {
+    background: #047857;
 }
 
-.transaction:last-child {
-    border-bottom: none;
-}
-
-.transaction-info h4 {
-    margin-bottom: 5px;
-    font-size: 15px;
-}
-
-.transaction-info p {
-    font-size: 12px;
-    color: #64748b;
-}
-
-.amount {
-    font-weight: bold;
-    white-space: nowrap;
-}
-
-.positive {
-    color: #059669;
-}
-
-.negative {
-    color: #dc2626;
-}
-
-.status {
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 25px;
-    color: #64748b;
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .message {
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 8px;
     display: none;
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 9px;
+    line-height: 1.5;
+}
+
+.success {
+    background: #d1fae5;
+    color: #065f46;
 }
 
 .error {
@@ -225,10 +128,29 @@ header button {
     color: #991b1b;
 }
 
-.loading {
-    color: #64748b;
-    padding: 20px;
+.info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.payment-note {
+    margin-top: 20px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 15px;
+    border-radius: 9px;
+    color: #166534;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.back-link {
+    display: block;
+    margin-top: 20px;
     text-align: center;
+    color: #047857;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 footer {
@@ -238,38 +160,6 @@ footer {
     font-size: 13px;
 }
 
-@media(max-width: 768px) {
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .welcome h1 {
-        font-size: 23px;
-    }
-
-    .balance-card h2 {
-        font-size: 29px;
-    }
-}
-
-@media(max-width: 400px) {
-    .stats {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .stat-card {
-        padding: 15px;
-    }
-
-    .stat-card h2 {
-        font-size: 18px;
-    }
-
-    .actions a {
-        flex: 1;
-        text-align: center;
-    }
-}
 </style>
 </head>
 
@@ -277,90 +167,69 @@ footer {
 
 <header>
     <div class="logo">GROW<span>VEST</span></div>
-    <button onclick="logout()">Logout</button>
+    <a href="dashboard.html">Dashboard</a>
 </header>
 
 <div class="container">
 
-    <div id="errorMessage" class="message error"></div>
+    <div class="card">
 
-    <div class="welcome">
-        <h1>Welcome, <span id="welcomeName">User</span> 👋</h1>
-        <p>Grow your future with GrowVest.</p>
-    </div>
+        <h1>Deposit Funds</h1>
 
-    <div class="balance-card">
-        <p>Available Wallet Balance</p>
-        <h2 id="balance">KSh 0.00</h2>
-
-        <div class="actions">
-            <a href="deposit.html">Deposit</a>
-            <a href="withdraw.html">Withdraw</a>
-            <a href="investments.html">Invest</a>
-            <a href="transactions.html">Transactions</a>
-        </div>
-    </div>
-
-    <div class="stats">
-
-        <div class="stat-card">
-            <p>Active Investments</p>
-            <h2 id="activeInvestments">KSh 0.00</h2>
-        </div>
-
-        <div class="stat-card">
-            <p>Total Deposits</p>
-            <h2 id="totalDeposits">KSh 0.00</h2>
-        </div>
-
-        <div class="stat-card">
-            <p>Referral Rewards</p>
-            <h2 id="referralRewards">KSh 0.00</h2>
-        </div>
-
-        <div class="stat-card">
-            <p>Total Withdrawals</p>
-            <h2 id="totalWithdrawals">KSh 0.00</h2>
-        </div>
-
-    </div>
-
-    <div class="section">
-        <h2>Referral Program</h2>
-        <p style="color:#64748b;margin-bottom:15px;">
-            Invite friends to join GrowVest using your referral code.
+        <p class="subtitle">
+            Deposit funds into your GrowVest wallet using M-Pesa.
         </p>
 
-        <div class="referral-box">
+        <div id="message" class="message"></div>
+
+        <form id="depositForm">
+
+            <label for="amount">Deposit Amount (KSh)</label>
+
             <input
-                type="text"
-                id="referralCode"
-                readonly
-                placeholder="Loading referral code..."
+                type="number"
+                id="amount"
+                min="1"
+                step="1"
+                placeholder="Enter amount"
+                required
             >
 
-            <button onclick="copyReferralCode()">Copy Code</button>
+            <label for="phone">M-Pesa Phone Number</label>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="07XXXXXXXX or 01XXXXXXXX"
+                required
+            >
+
+            <button type="submit" id="depositBtn">
+                Deposit via M-Pesa
+            </button>
+
+        </form>
+
+        <div class="payment-note">
+            <strong>How it works:</strong><br>
+            1. Enter the deposit amount.<br>
+            2. Enter your M-Pesa number.<br>
+            3. Tap the button to request STK Push.<br>
+            4. Enter your M-Pesa PIN when prompted.<br>
+            5. Wait for payment confirmation.
         </div>
 
-        <p id="referralMessage" style="margin-top:10px;color:#059669;"></p>
-    </div>
+        <a href="dashboard.html" class="back-link">
+            ← Back to Dashboard
+        </a>
 
-    <div class="section">
-        <h2>Recent Transactions</h2>
-
-        <div id="transactionsList">
-            <div class="loading">
-                Loading transactions...
-            </div>
-        </div>
     </div>
 
 </div>
 
 <footer>
-    © <span id="year"></span> GrowVest. Grow Your Future.
+    © <span id="year"></span> GrowVest
 </footer>
-
 
 <script>
 
@@ -369,6 +238,9 @@ const token = localStorage.getItem("growvest_token");
 if (!token) {
     window.location.href = "login.html";
 }
+
+document.getElementById("year").textContent =
+    new Date().getFullYear();
 
 const form = document.getElementById("depositForm");
 const button = document.getElementById("depositBtn");
@@ -407,7 +279,6 @@ function sleep(ms) {
 
 async function checkPaymentStatus(reference) {
 
-    // Maximum 12 checks, 5 seconds apart
     for (let attempt = 1; attempt <= 12; attempt++) {
 
         await sleep(5000);
@@ -441,14 +312,15 @@ async function checkPaymentStatus(reference) {
             if (status === "completed") {
 
                 showMessage(
-                    "Payment successful! Your wallet has been credited.",
+                    "Payment confirmed! Your wallet has been credited.",
                     "success"
                 );
 
                 button.textContent = "Payment Completed";
+
                 form.reset();
 
-                return;
+                return true;
             }
 
             if (status === "failed") {
@@ -458,7 +330,7 @@ async function checkPaymentStatus(reference) {
                     "error"
                 );
 
-                return;
+                return false;
             }
 
             if (status === "cancelled") {
@@ -468,29 +340,31 @@ async function checkPaymentStatus(reference) {
                     "error"
                 );
 
-                return;
+                return false;
             }
 
             showMessage(
-                "Waiting for payment... Please complete the M-Pesa prompt on your phone.",
-                "success"
+                "Waiting for M-Pesa payment. Please enter your PIN on your phone.",
+                "info"
             );
 
         } catch (error) {
 
-            console.error("Status check error:", error);
+            console.error("Payment status error:", error);
 
             showMessage(
-                "Payment initiated. We are checking its status...",
-                "success"
+                "Payment initiated. Checking payment status...",
+                "info"
             );
         }
     }
 
     showMessage(
-        "We haven't received confirmation yet. If you paid, please wait and check your dashboard before making another deposit.",
-        "success"
+        "Confirmation has not arrived yet. If you already paid, please check your dashboard before trying another deposit.",
+        "info"
     );
+
+    return false;
 }
 
 form.addEventListener("submit", async function(e) {
@@ -536,7 +410,6 @@ form.addEventListener("submit", async function(e) {
 
     try {
 
-        // Initiate STK Push
         const response = await fetch(
             "/.netlify/functions/deposit",
             {
@@ -546,8 +419,8 @@ form.addEventListener("submit", async function(e) {
                     "Authorization": "Bearer " + token
                 },
                 body: JSON.stringify({
-                    amount,
-                    phone
+                    amount: amount,
+                    phone: phone
                 })
             }
         );
@@ -555,30 +428,29 @@ form.addEventListener("submit", async function(e) {
         const data = await response.json();
 
         if (!response.ok) {
-
             throw new Error(
                 data.message || "Deposit request failed."
             );
         }
 
         if (!data.reference) {
-
             throw new Error(
                 "Payment reference was not returned."
             );
         }
 
         showMessage(
-            "STK Push sent! Enter your M-Pesa PIN on your phone. Waiting for confirmation...",
-            "success"
+            "STK Push initiated. Check your phone and enter your M-Pesa PIN.",
+            "info"
         );
 
         button.textContent = "Waiting for payment...";
 
-        // Automatically poll payment status
         await checkPaymentStatus(data.reference);
 
     } catch (error) {
+
+        console.error("Deposit error:", error);
 
         showMessage(
             error.message || "Unable to initiate payment.",
@@ -598,8 +470,6 @@ form.addEventListener("submit", async function(e) {
 });
 
 </script>
-
-
 
 </body>
 </html>
