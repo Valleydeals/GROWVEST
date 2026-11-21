@@ -1,0 +1,1233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GROWVEST | Grow Your Future</title>
+
+<meta name="description" content="GROWVEST - Manage your investment portfolio, track activity and explore investment opportunities.">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --green:#087f5b;
+    --green-dark:#06583f;
+    --gold:#d9b45a;
+    --dark:#10231c;
+    --white:#ffffff;
+    --light:#f4f8f5;
+    --gray:#728078;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--light);
+    color:var(--dark);
+    line-height:1.6;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button{
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.container{
+    width:92%;
+    max-width:1200px;
+    margin:auto;
+}
+
+/* NAVIGATION */
+
+header{
+    background:white;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    border-bottom:1px solid #e9efeb;
+}
+
+.navbar{
+    height:75px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:1px;
+    color:var(--green);
+}
+
+.logo span{
+    color:var(--gold);
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:28px;
+}
+
+.nav-links a{
+    font-size:14px;
+    font-weight:600;
+    color:#526159;
+}
+
+.nav-links a:hover{
+    color:var(--green);
+}
+
+.nav-actions{
+    display:flex;
+    gap:10px;
+}
+
+.btn{
+    display:inline-block;
+    border:none;
+    padding:12px 20px;
+    border-radius:9px;
+    font-size:14px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.btn-primary{
+    background:var(--green);
+    color:white;
+}
+
+.btn-primary:hover{
+    background:var(--green-dark);
+}
+
+.btn-outline{
+    border:1px solid var(--green);
+    color:var(--green);
+    background:white;
+}
+
+.menu-btn{
+    display:none;
+    border:none;
+    background:none;
+    font-size:25px;
+}
+
+/* HERO */
+
+.hero{
+    padding:75px 0;
+    background:
+    radial-gradient(circle at 85% 15%,rgba(18,168,117,.13),transparent 35%),
+    linear-gradient(135deg,#f5faf7,#edf6f0);
+}
+
+.hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:45px;
+    align-items:center;
+}
+
+.hero-badge{
+    display:inline-block;
+    padding:8px 14px;
+    background:#e1f4e9;
+    color:var(--green);
+    border-radius:30px;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-size:clamp(40px,5vw,66px);
+    line-height:1.12;
+    letter-spacing:-2px;
+    margin-bottom:20px;
+}
+
+.hero h1 span{
+    color:var(--green);
+}
+
+.hero-description{
+    color:var(--gray);
+    font-size:17px;
+    max-width:540px;
+    margin-bottom:28px;
+}
+
+.hero-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.hero-note{
+    margin-top:20px;
+    font-size:12px;
+    color:#78847c;
+}
+
+/* DASHBOARD PREVIEW */
+
+.preview-card{
+    background:var(--dark);
+    color:white;
+    padding:30px;
+    border-radius:24px;
+    box-shadow:0 25px 60px rgba(16,35,28,.15);
+    position:relative;
+    overflow:hidden;
+}
+
+.preview-card:before{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    background:rgba(18,168,117,.15);
+    border-radius:50%;
+    top:-100px;
+    right:-100px;
+}
+
+.preview-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    position:relative;
+}
+
+.preview-title{
+    font-size:13px;
+    color:#b6c8be;
+}
+
+.preview-brand{
+    color:var(--gold);
+    font-weight:bold;
+}
+
+.balance-label{
+    color:#b6c8be;
+    font-size:13px;
+}
+
+.balance{
+    font-size:35px;
+    font-weight:800;
+    margin:8px 0;
+}
+
+.preview-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:25px;
+}
+
+.preview-stat{
+    background:rgba(255,255,255,.07);
+    padding:15px;
+    border-radius:12px;
+}
+
+.preview-stat small{
+    color:#b6c8be;
+    display:block;
+}
+
+.preview-stat strong{
+    display:block;
+    font-size:18px;
+    margin-top:5px;
+}
+
+.preview-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:22px;
+}
+
+.preview-buttons button{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.deposit-button{
+    background:var(--green);
+    color:white;
+}
+
+.withdraw-button{
+    background:white;
+    color:var(--dark);
+}
+
+/* TRUST */
+
+.trust-section{
+    background:white;
+    padding:30px 0;
+    border-bottom:1px solid #e8efea;
+}
+
+.trust-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    text-align:center;
+}
+
+.trust-item strong{
+    display:block;
+    font-size:16px;
+}
+
+.trust-item span{
+    font-size:13px;
+    color:var(--gray);
+}
+
+/* SECTIONS */
+
+.section{
+    padding:75px 0;
+}
+
+.section-header{
+    text-align:center;
+    max-width:650px;
+    margin:0 auto 45px;
+}
+
+.section-header h2{
+    font-size:36px;
+    letter-spacing:-1px;
+    margin-bottom:12px;
+}
+
+.section-header p{
+    color:var(--gray);
+}
+
+/* INVESTMENT PLANS */
+
+.plans-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+.plan-card{
+    background:white;
+    padding:28px;
+    border:1px solid #e5eee8;
+    border-radius:18px;
+    transition:.2s;
+}
+
+.plan-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(10,70,45,.08);
+}
+
+.plan-card.featured{
+    border:2px solid var(--green);
+}
+
+.plan-label{
+    display:inline-block;
+    background:#e1f4e9;
+    color:var(--green);
+    padding:6px 10px;
+    font-size:11px;
+    font-weight:bold;
+    border-radius:20px;
+    margin-bottom:15px;
+}
+
+.plan-card h3{
+    font-size:21px;
+}
+
+.plan-description{
+    font-size:13px;
+    color:var(--gray);
+}
+
+.plan-amount{
+    font-size:30px;
+    font-weight:900;
+    margin:20px 0;
+}
+
+.plan-amount small{
+    font-size:13px;
+    color:var(--gray);
+    font-weight:normal;
+}
+
+.plan-details{
+    list-style:none;
+    margin:20px 0;
+}
+
+.plan-details li{
+    padding:10px 0;
+    border-bottom:1px solid #edf1ee;
+    font-size:14px;
+}
+
+.plan-details li:before{
+    content:"✓";
+    color:var(--green);
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.plan-card .btn{
+    width:100%;
+    text-align:center;
+}
+
+/* HOW IT WORKS */
+
+.steps-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+.step-card{
+    background:white;
+    border:1px solid #e7eee9;
+    padding:25px;
+    border-radius:16px;
+}
+
+.step-number{
+    height:45px;
+    width:45px;
+    border-radius:12px;
+    background:#e1f4e9;
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+.step-card h3{
+    margin-bottom:8px;
+}
+
+.step-card p{
+    color:var(--gray);
+    font-size:14px;
+}
+
+/* FEATURES */
+
+.features-section{
+    background:var(--dark);
+    color:white;
+}
+
+.features-section .section-header p{
+    color:#b6c8be;
+}
+
+.features-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.feature-card{
+    padding:25px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.04);
+    border-radius:15px;
+}
+
+.feature-icon{
+    font-size:28px;
+    margin-bottom:15px;
+}
+
+.feature-card h3{
+    margin-bottom:8px;
+}
+
+.feature-card p{
+    color:#b6c8be;
+    font-size:14px;
+}
+
+/* CTA */
+
+.cta-section{
+    padding:65px 0;
+}
+
+.cta-box{
+    background:linear-gradient(120deg,#087f5b,#07583f);
+    color:white;
+    padding:45px;
+    border-radius:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:25px;
+}
+
+.cta-box h2{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.cta-box p{
+    color:#d4eee2;
+}
+
+.cta-box .btn{
+    background:white;
+    color:var(--green);
+}
+
+/* FAQ */
+
+.faq-list{
+    max-width:800px;
+    margin:auto;
+}
+
+.faq-item{
+    background:white;
+    border:1px solid #e6eee8;
+    border-radius:12px;
+    margin-bottom:12px;
+}
+
+.faq-question{
+    width:100%;
+    background:none;
+    border:none;
+    padding:18px;
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    font-size:15px;
+    font-weight:bold;
+    color:var(--dark);
+}
+
+.faq-answer{
+    display:none;
+    padding:0 18px 18px;
+    color:var(--gray);
+    font-size:14px;
+}
+
+.faq-item.active .faq-answer{
+    display:block;
+}
+
+/* FOOTER */
+
+footer{
+    background:#0b1b14;
+    color:white;
+    padding:45px 0 20px;
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:30px;
+    margin-bottom:30px;
+}
+
+.footer-description{
+    color:#aebdb5;
+    font-size:14px;
+    margin-top:15px;
+    max-width:400px;
+}
+
+footer h4{
+    margin-bottom:15px;
+}
+
+footer a{
+    display:block;
+    color:#aebdb5;
+    font-size:14px;
+    margin:8px 0;
+}
+
+footer a:hover{
+    color:white;
+}
+
+.footer-bottom{
+    border-top:1px solid rgba(255,255,255,.1);
+    padding-top:20px;
+    font-size:12px;
+    color:#91a197;
+}
+
+.disclaimer{
+    margin-top:15px;
+    line-height:1.7;
+    font-size:11px;
+    color:#9eaaa3;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    .nav-links{
+        display:none;
+        position:absolute;
+        top:75px;
+        left:0;
+        right:0;
+        background:white;
+        padding:22px;
+        flex-direction:column;
+        border-bottom:1px solid #eee;
+        gap:20px;
+    }
+
+    .nav-links.show{
+        display:flex;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .nav-actions .btn-outline{
+        display:none;
+    }
+
+    .hero-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+        padding:55px 0;
+    }
+
+    .preview-card{
+        max-width:500px;
+        margin:auto;
+        width:100%;
+    }
+
+    .plans-grid{
+        grid-template-columns:1fr;
+    }
+
+    .steps-grid{
+        grid-template-columns:1fr;
+    }
+
+    .features-grid{
+        grid-template-columns:1fr;
+    }
+
+    .trust-grid{
+        grid-template-columns:1fr;
+    }
+
+    .cta-box{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+    }
+
+    .section{
+        padding:55px 0;
+    }
+
+    .section-header h2{
+        font-size:29px;
+    }
+
+    .hero h1{
+        letter-spacing:-1px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<header>
+<div class="container navbar">
+
+<a href="#" class="logo">GROW<span>VEST</span></a>
+
+<nav class="nav-links" id="navLinks">
+<a href="#home">Home</a>
+<a href="#plans">Plans</a>
+<a href="#how">How It Works</a>
+<a href="#features">Features</a>
+<a href="#faq">FAQ</a>
+</nav>
+
+<div class="nav-actions">
+<a href="login.html" class="btn btn-outline">Login</a>
+<a href="register.html" class="btn btn-primary">Get Started</a>
+</div>
+
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+</div>
+</header>
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+
+<div class="container hero-grid">
+
+<div>
+
+<div class="hero-badge">
+🌱 WELCOME TO GROWVEST
+</div>
+
+<h1>
+Grow Your Money.<br>
+<span>Build Your Future.</span>
+</h1>
+
+<p class="hero-description">
+Explore investment opportunities, track your portfolio,
+and manage your financial journey using the GROWVEST platform.
+</p>
+
+<div class="hero-actions">
+<a href="register.html" class="btn btn-primary">
+Create Account →
+</a>
+
+<a href="#plans" class="btn btn-outline">
+Explore Plans
+</a>
+</div>
+
+<div class="hero-note">
+Your financial journey starts with informed decisions.
+</div>
+
+</div>
+
+<div class="preview-card">
+
+<div class="preview-header">
+<div>
+<div class="preview-title">Portfolio Overview</div>
+<div class="preview-brand">GROWVEST</div>
+</div>
+
+<div>🌿</div>
+</div>
+
+<div class="balance-label">Portfolio Balance</div>
+
+<div class="balance">KSh 0.00</div>
+
+<div class="balance-label">Account overview</div>
+
+<div class="preview-stats">
+
+<div class="preview-stat">
+<small>Active Investments</small>
+<strong>0</strong>
+</div>
+
+<div class="preview-stat">
+<small>Available Balance</small>
+<strong>KSh 0</strong>
+</div>
+
+</div>
+
+<div class="preview-buttons">
+<button class="deposit-button" onclick="requireLogin()">Deposit</button>
+<button class="withdraw-button" onclick="requireLogin()">Withdraw</button>
+</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- TRUST -->
+
+<section class="trust-section">
+<div class="container trust-grid">
+
+<div class="trust-item">
+<strong>📱 Mobile Friendly</strong>
+<span>Access from your smartphone</span>
+</div>
+
+<div class="trust-item">
+<strong>📊 Portfolio Tracking</strong>
+<span>Track your investment activity</span>
+</div>
+
+<div class="trust-item">
+<strong>🔐 Account Security</strong>
+<span>Account protection features</span>
+</div>
+
+</div>
+</section>
+
+<!-- INVESTMENT PLANS -->
+
+<section class="section" id="plans">
+
+<div class="container">
+
+<div class="section-header">
+<h2>Investment Plans</h2>
+<p>Explore available investment options and review their terms before investing.</p>
+</div>
+
+<div class="plans-grid">
+
+<div class="plan-card">
+
+<div class="plan-label">STARTER</div>
+
+<h3>Starter Plan</h3>
+
+<p class="plan-description">For people getting started</p>
+
+<div class="plan-amount">
+KSh 500 <small>minimum</small>
+</div>
+
+<ul class="plan-details">
+<li>Minimum investment KSh 500</li>
+<li>Portfolio dashboard</li>
+<li>Investment tracking</li>
+<li>Terms displayed before investment</li>
+</ul>
+
+<a href="register.html" class="btn btn-primary">Get Started</a>
+
+</div>
+
+<div class="plan-card featured">
+
+<div class="plan-label">POPULAR</div>
+
+<h3>Growth Plan</h3>
+
+<p class="plan-description">For growing your portfolio</p>
+
+<div class="plan-amount">
+KSh 1,000 <small>minimum</small>
+</div>
+
+<ul class="plan-details">
+<li>Minimum investment KSh 1,000</li>
+<li>Portfolio dashboard</li>
+<li>Investment tracking</li>
+<li>Terms displayed before investment</li>
+</ul>
+
+<a href="register.html" class="btn btn-primary">Get Started</a>
+
+</div>
+
+<div class="plan-card">
+
+<div class="plan-label">PREMIUM</div>
+
+<h3>Premium Plan</h3>
+
+<p class="plan-description">For larger investment amounts</p>
+
+<div class="plan-amount">
+KSh 5,000 <small>minimum</small>
+</div>
+
+<ul class="plan-details">
+<li>Minimum investment KSh 5,000</li>
+<li>Portfolio dashboard</li>
+<li>Investment tracking</li>
+<li>Terms displayed before investment</li>
+</ul>
+
+<a href="register.html" class="btn btn-primary">Get Started</a>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section class="section" id="how">
+
+<div class="container">
+
+<div class="section-header">
+<h2>How GROWVEST Works</h2>
+<p>A simple process for accessing the platform.</p>
+</div>
+
+<div class="steps-grid">
+
+<div class="step-card">
+
+<div class="step-number">01</div>
+
+<h3>Create Account</h3>
+
+<p>Register and create your secure personal account.</p>
+
+</div>
+
+<div class="step-card">
+
+<div class="step-number">02</div>
+
+<h3>Explore Opportunities</h3>
+
+<p>Review investment options, terms, fees and risks.</p>
+
+</div>
+
+<div class="step-card">
+
+<div class="step-number">03</div>
+
+<h3>Manage Your Portfolio</h3>
+
+<p>Monitor your account activity and transactions through your dashboard.</p>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- FEATURES -->
+
+<section class="section features-section" id="features">
+
+<div class="container">
+
+<div class="section-header">
+
+<h2>Built For Your Financial Journey</h2>
+
+<p>Tools designed to help users manage their accounts conveniently.</p>
+
+</div>
+
+<div class="features-grid">
+
+<div class="feature-card">
+
+<div class="feature-icon">💳</div>
+
+<h3>Convenient Deposits</h3>
+
+<p>Deposit functionality designed for M-Pesa integration.</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">📈</div>
+
+<h3>Portfolio Dashboard</h3>
+
+<p>View your balances, investments and account activity.</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">💸</div>
+
+<h3>Withdrawal Requests</h3>
+
+<p>Submit withdrawal requests and monitor their processing status.</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">🔔</div>
+
+<h3>Transaction Updates</h3>
+
+<p>Stay informed about deposits, withdrawals and account transactions.</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">👥</div>
+
+<h3>Referral Programme</h3>
+
+<p>Track referrals and applicable programme rewards.</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">🛡️</div>
+
+<h3>Security</h3>
+
+<p>Account security and transaction controls.</p>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- CTA -->
+
+<section class="cta-section">
+
+<div class="container">
+
+<div class="cta-box">
+
+<div>
+
+<h2>Start Your Financial Journey</h2>
+
+<p>Create an account and explore the GROWVEST platform.</p>
+
+</div>
+
+<a href="register.html" class="btn">Create Account →</a>
+
+</div>
+
+</div>
+</section>
+
+<!-- FAQ -->
+
+<section class="section" id="faq">
+
+<div class="container">
+
+<div class="section-header">
+<h2>Frequently Asked Questions</h2>
+<p>Find answers to common questions about GROWVEST.</p>
+</div>
+
+<div class="faq-list">
+
+<div class="faq-item">
+
+<button class="faq-question" onclick="toggleFAQ(this)">
+How do I create an account?
+<span>+</span>
+</button>
+
+<div class="faq-answer">
+Click the Get Started or Create Account button and complete the registration process.
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question" onclick="toggleFAQ(this)">
+How do deposits work?
+<span>+</span>
+</button>
+
+<div class="faq-answer">
+Deposits will be processed through the supported payment system. Payment confirmation is required before funds are credited.
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question" onclick="toggleFAQ(this)">
+How do withdrawals work?
+<span>+</span>
+</button>
+
+<div class="faq-answer">
+Users will be able to submit withdrawal requests subject to the platform's applicable terms, verification and processing procedures.
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question" onclick="toggleFAQ(this)">
+Can investment returns change?
+<span>+</span>
+</button>
+
+<div class="faq-answer">
+Investment terms, rates, risks and conditions must be clearly disclosed. Returns are not guaranteed unless legally and financially supported.
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question" onclick="toggleFAQ(this)">
+Is my investment risk-free?
+<span>+</span>
+</button>
+
+<div class="faq-answer">
+No investment should be represented as risk-free unless that claim is accurate and legally supported. Users should review all risks before investing.
+</div>
+
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="container">
+
+<div class="footer-grid">
+
+<div>
+
+<a href="#" class="logo">GROW<span>VEST</span></a>
+
+<p class="footer-description">
+GROWVEST is an investment platform concept designed to provide
+users with account management, investment tracking and transaction tools.
+</p>
+
+</div>
+
+<div>
+
+<h4>Quick Links</h4>
+
+<a href="#home">Home</a>
+<a href="#plans">Investment Plans</a>
+<a href="#how">How It Works</a>
+<a href="#faq">FAQ</a>
+
+</div>
+
+<div>
+
+<h4>Account</h4>
+
+<a href="register.html">Register</a>
+<a href="login.html">Login</a>
+<a href="#">Contact Us</a>
+<a href="#">Terms & Conditions</a>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© <span id="year"></span> GROWVEST. All rights reserved.
+
+<div class="disclaimer">
+Investment involves risk. Returns, if any, depend on the actual investment
+activities and applicable terms. Review all risks and terms before committing funds.
+</div>
+
+</div>
+
+</div>
+</footer>
+
+<script>
+
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("show");
+}
+
+function toggleFAQ(button){
+    const item = button.parentElement;
+    item.classList.toggle("active");
+
+    const icon = button.querySelector("span");
+
+    icon.textContent = item.classList.contains("active") ? "−" : "+";
+}
+
+function requireLogin(){
+    window.location.href = "login.html";
+}
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+document.querySelectorAll(".nav-links a").forEach(link=>{
+    link.addEventListener("click",()=>{
+        document.getElementById("navLinks").classList.remove("show");
+    });
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | GROWVEST</title>
+
+<style>
+*{
+ margin:0;
+ padding:0;
+ box-sizing:border-box;
+}
+
+:root{
+ --green:#087f5b;
+ --green-dark:#06583f;
+ --gold:#d9b45a;
+ --dark:#10231c;
+ --gray:#728078;
+ --light:#f4f8f5;
+}
+
+body{
+ font-family:Arial,Helvetica,sans-serif;
+ background:var(--light);
+ min-height:100vh;
+ display:flex;
+ flex-direction:column;
+}
+
+a{text-decoration:none}
+
+.topbar{
+ background:white;
+ padding:18px 5%;
+ border-bottom:1px solid #e8efea;
+}
+
+.logo{
+ font-size:25px;
+ font-weight:900;
+ color:var(--green);
+ letter-spacing:1px;
+}
+
+.logo span{color:var(--gold)}
+
+.main{
+ flex:1;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:35px 15px;
+}
+
+.login-container{
+ width:100%;
+ max-width:440px;
+ background:white;
+ border:1px solid #e7eee9;
+ border-radius:20px;
+ padding:35px;
+ box-shadow:0 10px 35px rgba(10,60,40,.05);
+}
+
+.heading{
+ text-align:center;
+ margin-bottom:28px;
+}
+
+.heading h1{
+ font-size:28px;
+ margin-bottom:8px;
+ color:var(--dark);
+}
+
+.heading p{
+ color:var(--gray);
+ font-size:14px;
+}
+
+.form-group{
+ margin-bottom:18px;
+}
+
+label{
+ display:block;
+ font-size:13px;
+ font-weight:bold;
+ margin-bottom:7px;
+ color:#37483e;
+}
+
+input{
+ width:100%;
+ padding:13px 14px;
+ border:1px solid #dce6df;
+ border-radius:9px;
+ outline:none;
+ font-size:14px;
+}
+
+input:focus{
+ border-color:var(--green);
+ box-shadow:0 0 0 3px rgba(8,127,91,.08);
+}
+
+.password-wrapper{
+ position:relative;
+}
+
+.password-wrapper input{
+ padding-right:60px;
+}
+
+.show-password{
+ position:absolute;
+ right:12px;
+ top:50%;
+ transform:translateY(-50%);
+ border:none;
+ background:none;
+ color:var(--green);
+ font-size:12px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.options{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin:15px 0 20px;
+}
+
+.remember{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ font-size:12px;
+ color:var(--gray);
+}
+
+.remember input{
+ width:16px;
+ height:16px;
+ accent-color:var(--green);
+}
+
+.forgot{
+ color:var(--green);
+ font-size:12px;
+ font-weight:bold;
+}
+
+.login-btn{
+ width:100%;
+ background:var(--green);
+ color:white;
+ padding:14px;
+ border:none;
+ border-radius:9px;
+ font-size:15px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.login-btn:hover{
+ background:var(--green-dark);
+}
+
+.message{
+ display:none;
+ padding:12px;
+ border-radius:9px;
+ font-size:13px;
+ margin-bottom:15px;
+}
+
+.message.error{
+ display:block;
+ background:#fff0f0;
+ color:#b42318;
+}
+
+.message.success{
+ display:block;
+ background:#e8f7ee;
+ color:#087f5b;
+}
+
+.register-link{
+ text-align:center;
+ margin-top:22px;
+ font-size:14px;
+ color:var(--gray);
+}
+
+.register-link a{
+ color:var(--green);
+ font-weight:bold;
+}
+
+.security-note{
+ text-align:center;
+ font-size:12px;
+ color:var(--gray);
+ margin-top:20px;
+}
+
+footer{
+ text-align:center;
+ padding:20px;
+ font-size:12px;
+ color:var(--gray);
+}
+
+@media(max-width:500px){
+ .login-container{
+  padding:25px 20px;
+ }
+ .heading h1{
+  font-size:25px;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html" class="logo">GROW<span>VEST</span></a>
+</header>
+
+<main class="main">
+
+<div class="login-container">
+
+<div class="heading">
+
+<h1>Welcome Back</h1>
+
+<p>Login to access your GROWVEST account</p>
+
+</div>
+
+<div id="message" class="message"></div>
+
+<form id="loginForm">
+
+<div class="form-group">
+
+<label for="identifier">Phone Number or Email</label>
+
+<input
+type="text"
+id="identifier"
+name="identifier"
+placeholder="Enter phone number or email"
+autocomplete="username"
+required
+>
+
+</div>
+
+<div class="form-group">
+
+<label for="password">Password</label>
+
+<div class="password-wrapper">
+
+<input
+type="password"
+id="password"
+name="password"
+placeholder="Enter your password"
+autocomplete="current-password"
+required
+>
+
+<button
+type="button"
+class="show-password"
+onclick="togglePassword()"
+>
+Show
+</button>
+
+</div>
+
+</div>
+
+<div class="options">
+
+<label class="remember">
+
+<input type="checkbox" id="remember">
+
+Remember me
+
+</label>
+
+<a href="forgot-password.html" class="forgot">
+Forgot password?
+</a>
+
+</div>
+
+<button type="submit" class="login-btn" id="loginBtn">
+Login
+</button>
+
+</form>
+
+<div class="register-link">
+
+Don't have an account?
+
+<a href="register.html">Create Account</a>
+
+</div>
+
+<div class="security-note">
+🔒 Secure account access
+</div>
+
+</div>
+
+</main>
+
+<footer>
+© <span id="year"></span> GROWVEST. All rights reserved.
+</footer>
+
+<script>
+
+document.getElementById("year").textContent =
+new Date().getFullYear();
+
+function togglePassword(){
+
+const input = document.getElementById("password");
+
+const button = document.querySelector(".show-password");
+
+if(input.type === "password"){
+ input.type = "text";
+ button.textContent = "Hide";
+}else{
+ input.type = "password";
+ button.textContent = "Show";
+}
+
+}
+
+function showMessage(text,type){
+
+const message = document.getElementById("message");
+
+message.textContent = text;
+message.className = "message " + type;
+
+}
+
+document.getElementById("loginForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const identifier =
+document.getElementById("identifier").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+if(!identifier || !password){
+
+showMessage("Please enter your login details.","error");
+return;
+
+}
+
+/*
+LOGIN BACKEND WILL BE CONNECTED
+IN THE NEXT DEVELOPMENT STEP.
+*/
+
+showMessage(
+"Login form validated. Backend authentication will be connected next.",
+"success"
+);
+
+});
+
+</script>
+
+</body>
+</html>

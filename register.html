@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account | GROWVEST</title>
+
+<style>
+*{
+ margin:0;
+ padding:0;
+ box-sizing:border-box;
+}
+
+:root{
+ --green:#087f5b;
+ --green-dark:#06583f;
+ --gold:#d9b45a;
+ --dark:#10231c;
+ --gray:#728078;
+ --light:#f4f8f5;
+}
+
+body{
+ font-family:Arial,Helvetica,sans-serif;
+ background:var(--light);
+ min-height:100vh;
+ display:flex;
+ flex-direction:column;
+}
+
+a{
+ text-decoration:none;
+}
+
+.topbar{
+ background:white;
+ padding:18px 5%;
+ border-bottom:1px solid #e8efea;
+}
+
+.logo{
+ font-size:25px;
+ font-weight:900;
+ color:var(--green);
+ letter-spacing:1px;
+}
+
+.logo span{
+ color:var(--gold);
+}
+
+.main{
+ flex:1;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:35px 15px;
+}
+
+.register-container{
+ width:100%;
+ max-width:480px;
+ background:white;
+ border:1px solid #e7eee9;
+ border-radius:20px;
+ padding:35px;
+ box-shadow:0 10px 35px rgba(10,60,40,.05);
+}
+
+.heading{
+ text-align:center;
+ margin-bottom:28px;
+}
+
+.heading h1{
+ font-size:28px;
+ margin-bottom:8px;
+ color:var(--dark);
+}
+
+.heading p{
+ color:var(--gray);
+ font-size:14px;
+}
+
+.form-group{
+ margin-bottom:17px;
+}
+
+label{
+ display:block;
+ font-size:13px;
+ font-weight:bold;
+ margin-bottom:7px;
+ color:#37483e;
+}
+
+input{
+ width:100%;
+ padding:13px 14px;
+ border:1px solid #dce6df;
+ border-radius:9px;
+ outline:none;
+ font-size:14px;
+ background:white;
+ transition:.2s;
+}
+
+input:focus{
+ border-color:var(--green);
+ box-shadow:0 0 0 3px rgba(8,127,91,.08);
+}
+
+.phone-row{
+ display:flex;
+ gap:8px;
+}
+
+.country-code{
+ width:100px;
+ background:#f4f8f5;
+ text-align:center;
+ font-weight:bold;
+}
+
+.password-wrapper{
+ position:relative;
+}
+
+.password-wrapper input{
+ padding-right:60px;
+}
+
+.show-password{
+ position:absolute;
+ right:12px;
+ top:50%;
+ transform:translateY(-50%);
+ border:none;
+ background:none;
+ color:var(--green);
+ font-size:12px;
+ font-weight:bold;
+}
+
+.checkbox-row{
+ display:flex;
+ align-items:flex-start;
+ gap:10px;
+ margin:18px 0;
+}
+
+.checkbox-row input{
+ width:17px;
+ height:17px;
+ margin-top:2px;
+ accent-color:var(--green);
+}
+
+.checkbox-row label{
+ font-weight:normal;
+ font-size:12px;
+ line-height:1.6;
+ margin:0;
+}
+
+.checkbox-row a{
+ color:var(--green);
+ font-weight:bold;
+}
+
+.submit-btn{
+ width:100%;
+ background:var(--green);
+ color:white;
+ padding:14px;
+ border:none;
+ border-radius:9px;
+ font-size:15px;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.submit-btn:hover{
+ background:var(--green-dark);
+}
+
+.submit-btn:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+}
+
+.login-link{
+ text-align:center;
+ margin-top:20px;
+ font-size:14px;
+ color:var(--gray);
+}
+
+.login-link a{
+ color:var(--green);
+ font-weight:bold;
+}
+
+.message{
+ display:none;
+ padding:12px;
+ border-radius:9px;
+ font-size:13px;
+ margin-bottom:15px;
+}
+
+.message.error{
+ display:block;
+ background:#fff0f0;
+ color:#b42318;
+}
+
+.message.success{
+ display:block;
+ background:#e8f7ee;
+ color:#087f5b;
+}
+
+.security-note{
+ text-align:center;
+ font-size:12px;
+ color:var(--gray);
+ margin-top:20px;
+}
+
+footer{
+ text-align:center;
+ padding:20px;
+ font-size:12px;
+ color:var(--gray);
+}
+
+@media(max-width:500px){
+ .register-container{
+  padding:25px 20px;
+ }
+ .heading h1{
+  font-size:25px;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html" class="logo">GROW<span>VEST</span></a>
+</header>
+
+<main class="main">
+
+<div class="register-container">
+
+<div class="heading">
+
+<h1>Create Your Account</h1>
+
+<p>Join GROWVEST and manage your account</p>
+
+</div>
+
+<div id="message" class="message"></div>
+
+<form id="registerForm">
+
+<div class="form-group">
+
+<label for="fullname">Full Name</label>
+
+<input
+type="text"
+id="fullname"
+name="fullname"
+placeholder="Enter your full name"
+autocomplete="name"
+required
+>
+
+</div>
+
+<div class="form-group">
+
+<label for="phone">Phone Number</label>
+
+<div class="phone-row">
+
+<input
+type="text"
+class="country-code"
+value="+254"
+readonly
+>
+
+<input
+type="tel"
+id="phone"
+name="phone"
+placeholder="712345678"
+autocomplete="tel-national"
+required
+>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label for="email">Email Address</label>
+
+<input
+type="email"
+id="email"
+name="email"
+placeholder="you@example.com"
+autocomplete="email"
+required
+>
+
+</div>
+
+<div class="form-group">
+
+<label for="password">Password</label>
+
+<div class="password-wrapper">
+
+<input
+type="password"
+id="password"
+name="password"
+placeholder="Create a password"
+autocomplete="new-password"
+required
+>
+
+<button
+type="button"
+class="show-password"
+onclick="togglePassword('password',this)"
+>
+Show
+</button>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label for="confirmPassword">Confirm Password</label>
+
+<div class="password-wrapper">
+
+<input
+type="password"
+id="confirmPassword"
+name="confirmPassword"
+placeholder="Confirm your password"
+autocomplete="new-password"
+required
+>
+
+<button
+type="button"
+class="show-password"
+onclick="togglePassword('confirmPassword',this)"
+>
+Show
+</button>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label for="referral">Referral Code (Optional)</label>
+
+<input
+type="text"
+id="referral"
+name="referral"
+placeholder="Enter referral code"
+>
+
+</div>
+
+<div class="checkbox-row">
+
+<input
+type="checkbox"
+id="terms"
+required
+>
+
+<label for="terms">
+I have read and agree to the
+<a href="terms.html">Terms & Conditions</a>
+and
+<a href="privacy.html">Privacy Policy</a>.
+</label>
+
+</div>
+
+<button type="submit" class="submit-btn" id="submitBtn">
+Create Account
+</button>
+
+</form>
+
+<div class="login-link">
+Already have an account?
+<a href="login.html">Login</a>
+</div>
+
+<div class="security-note">
+🔒 Your account information should be protected.
+</div>
+
+</div>
+
+</main>
+
+<footer>
+© <span id="year"></span> GROWVEST. All rights reserved.
+</footer>
+
+<script>
+
+document.getElementById("year").textContent =
+new Date().getFullYear();
+
+function togglePassword(id,button){
+
+const input = document.getElementById(id);
+
+if(input.type === "password"){
+ input.type = "text";
+ button.textContent = "Hide";
+}else{
+ input.type = "password";
+ button.textContent = "Show";
+}
+
+}
+
+function showMessage(text,type){
+
+const message = document.getElementById("message");
+
+message.textContent = text;
+message.className = "message " + type;
+
+}
+
+document.getElementById("registerForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const fullname =
+document.getElementById("fullname").value.trim();
+
+let phone =
+document.getElementById("phone").value.trim();
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+const confirmPassword =
+document.getElementById("confirmPassword").value;
+
+const referral =
+document.getElementById("referral").value.trim();
+
+const terms =
+document.getElementById("terms").checked;
+
+if(fullname.length < 3){
+
+showMessage("Please enter your full name.","error");
+return;
+
+}
+
+phone = phone.replace(/\s+/g,"");
+
+if(phone.startsWith("0")){
+ phone = phone.substring(1);
+}
+
+if(phone.startsWith("254")){
+ phone = phone.substring(3);
+}
+
+if(!/^[17]\d{8}$/.test(phone)){
+
+showMessage("Enter a valid Kenyan phone number.","error");
+return;
+
+}
+
+if(password.length < 8){
+
+showMessage("Password must be at least 8 characters.","error");
+return;
+
+}
+
+if(password !== confirmPassword){
+
+showMessage("Your passwords do not match.","error");
+return;
+
+}
+
+if(!terms){
+
+showMessage("Please accept the terms and conditions.","error");
+return;
+
+}
+
+/*
+FRONTEND VALIDATION ONLY.
+
+Registration will be connected to the backend
+and PostgreSQL database in the next step.
+*/
+
+showMessage(
+"Form validated successfully. Backend registration will be connected next.",
+"success"
+);
+
+});
+
+</script>
+
+</body>
+</html>
