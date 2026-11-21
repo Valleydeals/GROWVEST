@@ -673,12 +673,22 @@ async function loadAdminWithdrawals() {
             : "-"}
         </td>
         <td>
-          ${
-            item.status === "pending"
-              ? "Awaiting review"
-              : "—"
-          }
-        </td>
+  ${
+    item.status === "pending"
+      ? `
+        <button class="primary-btn"
+          onclick="handleWithdrawalAction('${item.id}','approve')">
+          Approve
+        </button>
+
+        <button class="danger-btn"
+          onclick="handleWithdrawalAction('${item.id}','reject')">
+          Reject
+        </button>
+      `
+      : escapeHTML(item.status)
+  }
+</td>
       </tr>
     `).join("");
 
@@ -688,6 +698,48 @@ async function loadAdminWithdrawals() {
     tbody.innerHTML = `
       <tr><td colspan="7">Failed to load withdrawals.</td></tr>
     `;
+  }
+}
+
+async function handleWithdrawalAction(withdrawalId, action) {
+  const confirmMessage =
+    action === "approve"
+      ? "Approve this withdrawal? It will move to processing, but no payment will be sent yet."
+      : "Reject this withdrawal and refund the reserved amount to the user's wallet?";
+
+  if (!confirm(confirmMessage)) return;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-withdrawal-action",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + adminToken
+        },
+        body: JSON.stringify({
+          withdrawalId,
+          action
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Action failed");
+      return;
+    }
+
+    alert(data.message);
+
+    await loadAdminWithdrawals();
+    await loadAdminStats();
+
+  } catch (error) {
+    console.error(error);
+    alert("Unable to process action. Please try again.");
   }
 }
 
