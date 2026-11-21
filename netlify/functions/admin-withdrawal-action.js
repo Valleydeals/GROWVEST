@@ -1,4 +1,3 @@
-
 const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 
@@ -68,7 +67,9 @@ exports.handler = async (event) => {
 
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: "Withdrawal not found" })
+        body: JSON.stringify({
+          message: "Withdrawal not found"
+        })
       };
     }
 
@@ -85,6 +86,9 @@ exports.handler = async (event) => {
       };
     }
 
+    const adminUsername = decoded.username || "Admin";
+
+    // APPROVE WITHDRAWAL
     if (action === "approve") {
       await client.query(
         `UPDATE withdrawals
@@ -100,6 +104,18 @@ exports.handler = async (event) => {
         [withdrawal.reference]
       );
 
+      // AUDIT LOG
+      await client.query(
+        `INSERT INTO admin_logs
+         (admin_id, action, details)
+         VALUES ($1, $2, $3)`,
+        [
+          decoded.admin_id || decoded.adminId || null,
+          "withdrawal_approved",
+          `Admin ${adminUsername} approved withdrawal. ID: ${withdrawalId}, Reference: ${withdrawal.reference}, Amount: ${withdrawal.amount}`
+        ]
+      );
+
       await client.query("COMMIT");
 
       return {
@@ -111,7 +127,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // REJECTION: refund reserved wallet amount
+    // REJECT WITHDRAWAL
     await client.query(
       `UPDATE wallets
        SET balance = balance + $1
@@ -144,6 +160,18 @@ exports.handler = async (event) => {
         "REF-" + withdrawal.reference,
         "Refund for rejected withdrawal",
         "completed"
+      ]
+    );
+
+    // AUDIT LOG
+    await client.query(
+      `INSERT INTO admin_logs
+       (admin_id, action, details)
+       VALUES ($1, $2, $3)`,
+      [
+        decoded.admin_id || decoded.adminId || null,
+        "withdrawal_rejected",
+        `Admin ${adminUsername} rejected withdrawal. ID: ${withdrawalId}, Reference: ${withdrawal.reference}, Amount: ${withdrawal.amount}. Wallet funds refunded.`
       ]
     );
 
