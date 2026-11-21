@@ -336,65 +336,105 @@ Don't have an account?
 </footer>
 
 <script>
+const loginForm = document.getElementById("loginForm");
 
-document.getElementById("year").textContent =
-new Date().getFullYear();
+loginForm.addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-function togglePassword(){
+  let identifier = document.getElementById("identifier").value.trim();
+  const password = document.getElementById("password").value;
 
-const input = document.getElementById("password");
+  const rememberMe = document.getElementById("rememberMe");
 
-const button = document.querySelector(".show-password");
+  if (!identifier || !password) {
+    alert("Enter your login details.");
+    return;
+  }
 
-if(input.type === "password"){
- input.type = "text";
- button.textContent = "Hide";
-}else{
- input.type = "password";
- button.textContent = "Show";
-}
+  // Normalize Kenyan phone numbers
+  if (/^[0-7]\d{8}$/.test(identifier)) {
+    identifier = "+254" + identifier;
+  } else if (/^254\d{9}$/.test(identifier)) {
+    identifier = "+" + identifier;
+  }
 
-}
+  // Normalize email
+  if (identifier.includes("@")) {
+    identifier = identifier.toLowerCase();
+  }
 
-function showMessage(text,type){
+  const submitButton = loginForm.querySelector('button[type="submit"]');
 
-const message = document.getElementById("message");
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Logging in...";
+  }
 
-message.textContent = text;
-message.className = "message " + type;
+  try {
+    const response = await fetch("/.netlify/functions/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        identifier,
+        password
+      })
+    });
 
-}
+    const data = await response.json();
 
-document.getElementById("loginForm")
-.addEventListener("submit",function(e){
+    if (!response.ok) {
+      alert(data.message || "Login failed.");
+      return;
+    }
 
-e.preventDefault();
+    // Store authentication token
+    localStorage.setItem("growvest_token", data.token);
 
-const identifier =
-document.getElementById("identifier").value.trim();
+    // Store user information
+    localStorage.setItem(
+      "growvest_user",
+      JSON.stringify(data.user)
+    );
 
-const password =
-document.getElementById("password").value;
+    // Remember login identifier only
+    if (rememberMe && rememberMe.checked) {
+      localStorage.setItem("growvest_identifier", identifier);
+    } else {
+      localStorage.removeItem("growvest_identifier");
+    }
 
-if(!identifier || !password){
+    alert("Login successful!");
 
-showMessage("Please enter your login details.","error");
-return;
+    window.location.href = "dashboard.html";
 
-}
-
-/*
-LOGIN BACKEND WILL BE CONNECTED
-IN THE NEXT DEVELOPMENT STEP.
-*/
-
-showMessage(
-"Login form validated. Backend authentication will be connected next.",
-"success"
-);
-
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Unable to connect to the server. Please try again.");
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Login";
+    }
+  }
 });
 
+// Restore remembered identifier
+const savedIdentifier = localStorage.getItem("growvest_identifier");
+
+if (savedIdentifier) {
+  const identifierInput = document.getElementById("identifier");
+  const rememberCheckbox = document.getElementById("rememberMe");
+
+  if (identifierInput) {
+    identifierInput.value = savedIdentifier;
+  }
+
+  if (rememberCheckbox) {
+    rememberCheckbox.checked = true;
+  }
+}
 </script>
 
 </body>

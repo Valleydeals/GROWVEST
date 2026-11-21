@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROWVEST Dashboard</title>
+
+<style>
+:root {
+  --green: #047857;
+  --green-dark: #064e3b;
+  --gold: #d4af37;
+  --bg: #f4f7f5;
+  --white: #ffffff;
+  --text: #182522;
+  --muted: #738078;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: var(--white);
+  border-bottom: 1px solid #e8eeea;
+  padding: 16px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.logo span {
+  color: var(--gold);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  border: none;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 9px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.container {
+  width: 92%;
+  max-width: 1200px;
+  margin: 30px auto;
+}
+
+.welcome {
+  margin-bottom: 25px;
+}
+
+.welcome h1 {
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  color: var(--muted);
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #064e3b, #047857);
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-card::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  right: -50px;
+  top: -50px;
+}
+
+.balance-label {
+  color: #d1fae5;
+  font-size: 14px;
+}
+
+.balance {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 15px 0 25px;
+}
+
+.balance-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.deposit-btn {
+  background: white;
+  color: var(--green-dark);
+}
+
+.withdraw-btn {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 22px;
+  border-radius: 15px;
+  border: 1px solid #e8eeea;
+}
+
+.stat-card .label {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.stat-card h2 {
+  font-size: 24px;
+}
+
+.stat-card .icon {
+  font-size: 23px;
+  margin-bottom: 14px;
+}
+
+.section {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  border: 1px solid #e8eeea;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.section-header h2 {
+  font-size: 19px;
+}
+
+.view-all {
+  color: var(--green);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 35px 15px;
+  color: var(--muted);
+}
+
+.empty-state .empty-icon {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.empty-state h3 {
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.referral-box {
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  border-radius: 15px;
+  padding: 22px;
+}
+
+.referral-box h3 {
+  color: var(--green-dark);
+  margin-bottom: 10px;
+}
+
+.referral-code {
+  display: flex;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.referral-code input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+}
+
+.copy-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.notice {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+@media(max-width: 850px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 500px) {
+  header {
+    padding: 15px 4%;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .container {
+    width: 94%;
+    margin: 20px auto;
+  }
+
+  .welcome h1 {
+    font-size: 23px;
+  }
+
+  .balance-card {
+    padding: 23px;
+  }
+
+  .balance {
+    font-size: 30px;
+  }
+
+  .stats {
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 17px;
+  }
+
+  .stat-card h2 {
+    font-size: 20px;
+  }
+
+  .section {
+    padding: 18px;
+  }
+
+  .referral-code {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">GROW<span>VEST</span></div>
+
+  <div class="header-right">
+    <span class="user-name" id="headerName">User</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="welcome">
+    <h1>Welcome, <span id="welcomeName">Investor</span> 👋</h1>
+    <p>Manage your account and track your activity.</p>
+  </div>
+
+  <div class="notice">
+    Investment products, rates, risks, fees and withdrawal conditions
+    must be clearly disclosed before funds are accepted. No earnings
+    are guaranteed.
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-label">Available Balance</div>
+
+    <div class="balance" id="balance">
+      KSh 0.00
+    </div>
+
+    <div class="balance-actions">
+      <a href="deposit.html" class="action-btn deposit-btn">
+        + Deposit
+      </a>
+
+      <a href="withdraw.html" class="action-btn withdraw-btn">
+        Withdraw
+      </a>
+    </div>
+  </div>
+
+  <div class="stats">
+
+    <div class="stat-card">
+      <div class="icon">📈</div>
+      <div class="label">Active Investments</div>
+      <h2>KSh 0.00</h2>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon">💰</div>
+      <div class="label">Total Deposits</div>
+      <h2>KSh 0.00</h2>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon">🎁</div>
+      <div class="label">Referral Rewards</div>
+      <h2>KSh 0.00</h2>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon">📊</div>
+      <div class="label">Total Withdrawals</div>
+      <h2>KSh 0.00</h2>
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-header">
+      <h2>My Investments</h2>
+      <a href="investments.html" class="view-all">View All</a>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h3>No investments yet</h3>
+      <p>
+        Your investment activity will appear here
+        once eligible investment products are available.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-header">
+      <h2>Recent Transactions</h2>
+      <a href="transactions.html" class="view-all">View All</a>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-icon">💳</div>
+      <h3>No transactions yet</h3>
+      <p>Your deposits and withdrawals will appear here.</p>
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <div class="referral-box">
+      <h3>Invite Friends</h3>
+
+      <p>
+        Share your referral code with friends.
+      </p>
+
+      <div class="referral-code">
+        <input
+          type="text"
+          id="referralCode"
+          readonly
+          value="Loading..."
+        >
+
+        <button class="copy-btn" onclick="copyReferralCode()">
+          Copy
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  © 2026 GROWVEST — Grow Your Future.
+</footer>
+
+<script>
+
+// Authentication check
+const token = localStorage.getItem("growvest_token");
+const userData = localStorage.getItem("growvest_user");
+
+if (!token || !userData) {
+  window.location.href = "login.html";
+}
+
+let user = {};
+
+try {
+  user = JSON.parse(userData);
+} catch (error) {
+  logout();
+}
+
+// Display user information
+if (user && user.full_name) {
+  document.getElementById("welcomeName").textContent =
+    user.full_name.split(" ")[0];
+
+  document.getElementById("headerName").textContent =
+    user.full_name;
+}
+
+// Display referral code
+if (user && user.referral_code) {
+  document.getElementById("referralCode").value =
+    user.referral_code;
+}
+
+// Copy referral code
+function copyReferralCode() {
+  const input = document.getElementById("referralCode");
+
+  input.select();
+  input.setSelectionRange(0, 99999);
+
+  navigator.clipboard.writeText(input.value)
+    .then(() => alert("Referral code copied!"))
+    .catch(() => {
+      document.execCommand("copy");
+      alert("Referral code copied!");
+    });
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem("growvest_token");
+  localStorage.removeItem("growvest_user");
+
+  window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>
