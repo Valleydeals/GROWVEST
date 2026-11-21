@@ -493,6 +493,24 @@ th {
             <td colspan="6">Investments will load here.</td>
           </tr>
         </tbody>
+        <div id="investmentPagination"
+     style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap;">
+
+  <p id="investmentPageInfo" style="color:#718078;font-size:13px;">
+    Page 1
+  </p>
+
+  <div style="display:flex;gap:8px;">
+    <button class="primary-btn" id="investmentPrevBtn">
+      Previous
+    </button>
+
+    <button class="primary-btn" id="investmentNextBtn">
+      Next
+    </button>
+  </div>
+
+</div>
       </table>
     </div>
 
@@ -731,6 +749,9 @@ async function loadAdminDeposits() {
     `;
   }
 }
+let investmentCurrentPage = 1;
+const investmentPageSize = 10;
+let investmentData = [];
 async function loadAdminInvestments() {
   const tbody = document.getElementById("investmentsTable");
 
@@ -758,6 +779,98 @@ async function loadAdminInvestments() {
     if (!data.success) {
       throw new Error(data.message);
     }
+    function renderInvestmentTable() {
+  const tbody = document.getElementById("investmentsTable");
+
+  const search = document
+    .getElementById("investmentSearch")
+    .value.toLowerCase();
+
+  const status = document
+    .getElementById("investmentStatusFilter")
+    .value;
+
+  // Apply search
+  let filtered = investmentData.filter(item => {
+    const text = [
+      item.full_name,
+      item.phone,
+      item.plan_name,
+      item.status,
+      item.amount
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = text.includes(search);
+
+    const matchesStatus =
+      status === "all" ||
+      String(item.status).toLowerCase() === status;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filtered.length / investmentPageSize)
+  );
+
+  if (investmentCurrentPage > totalPages) {
+    investmentCurrentPage = totalPages;
+  }
+
+  const startIndex =
+    (investmentCurrentPage - 1) * investmentPageSize;
+
+  const pageItems = filtered.slice(
+    startIndex,
+    startIndex + investmentPageSize
+  );
+
+  if (!pageItems.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="6">No investments found.</td></tr>
+    `;
+  } else {
+    tbody.innerHTML = pageItems.map(item => `
+      <tr>
+        <td>
+          ${escapeHTML(item.full_name || "Unknown")}
+          <br>
+          <small>${escapeHTML(item.phone || "-")}</small>
+        </td>
+
+        <td>${escapeHTML(item.plan_name || "-")}</td>
+
+        <td>${formatMoney(item.amount)}</td>
+
+        <td>${Number(item.daily_rate || 0)}%</td>
+
+        <td>
+          <span class="status">
+            ${escapeHTML(item.status || "-")}
+          </span>
+        </td>
+
+        <td>
+          ${item.start_date
+            ? new Date(item.start_date).toLocaleDateString()
+            : "-"}
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  // Page information
+  document.getElementById("investmentPageInfo").textContent =
+    `Page ${investmentCurrentPage} of ${totalPages} (${filtered.length} investments)`;
+
+  // Button states
+  document.getElementById("investmentPrevBtn").disabled =
+    investmentCurrentPage <= 1;
+
+  document.getElementById("investmentNextBtn").disabled =
+    investmentCurrentPage >= totalPages;
+}
 // Investment summary statistics
 const investments = data.investments;
 
@@ -792,34 +905,10 @@ document.getElementById("investmentRecordCount").textContent =
       return;
     }
 
-    tbody.innerHTML = data.investments.map(item => `
-      <tr>
-        <td>
-          ${escapeHTML(item.full_name || "Unknown")}
-          <br>
-          <small>${escapeHTML(item.phone || "-")}</small>
-        </td>
+    investmentData = data.investments;
+investmentCurrentPage = 1;
 
-        <td>${escapeHTML(item.plan_name || "-")}</td>
-
-        <td>${formatMoney(item.amount)}</td>
-
-        <td>${Number(item.daily_rate || 0)}%</td>
-
-        <td>
-          <span class="status">
-            ${escapeHTML(item.status || "-")}
-          </span>
-        </td>
-
-        <td>
-          ${item.start_date
-            ? new Date(item.start_date).toLocaleDateString()
-            : "-"}
-        </td>
-      </tr>
-    `).join("");
-
+renderInvestmentTable();
   } catch (error) {
     console.error("Investments loading error:", error);
 
