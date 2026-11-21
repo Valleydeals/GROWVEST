@@ -533,6 +533,9 @@ function showSection(sectionId, button) {
 
   document.getElementById("pageTitle").textContent =
     titles[sectionId] || "GrowVest Admin";
+    if (sectionId === "withdrawals") {
+  loadAdminWithdrawals();
+}
     if (sectionId === "users") {
   loadAdminUsers();
 }
@@ -616,6 +619,74 @@ async function loadAdminDeposits() {
 
     tbody.innerHTML = `
       <tr><td colspan="6">Failed to load deposits.</td></tr>
+    `;
+  }
+}
+
+async function loadAdminWithdrawals() {
+  const tbody = document.getElementById("withdrawalsTable");
+
+  tbody.innerHTML = `
+    <tr><td colspan="7">Loading withdrawals...</td></tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-withdrawals",
+      {
+        headers: {
+          Authorization: "Bearer " + adminToken
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      logoutAdmin();
+      return;
+    }
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    if (!data.withdrawals.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="7">No withdrawal requests found.</td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.withdrawals.map(item => `
+      <tr>
+        <td>${escapeHTML(item.full_name || "Unknown")}</td>
+        <td>${formatMoney(item.amount)}</td>
+        <td>${escapeHTML(item.phone || "-")}</td>
+        <td>${escapeHTML(item.reference || "-")}</td>
+        <td>
+          <span class="status">${escapeHTML(item.status || "-")}</span>
+        </td>
+        <td>
+          ${item.created_at
+            ? new Date(item.created_at).toLocaleString()
+            : "-"}
+        </td>
+        <td>
+          ${
+            item.status === "pending"
+              ? "Awaiting review"
+              : "—"
+          }
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error("Withdrawals loading error:", error);
+
+    tbody.innerHTML = `
+      <tr><td colspan="7">Failed to load withdrawals.</td></tr>
     `;
   }
 }
