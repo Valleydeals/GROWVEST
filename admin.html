@@ -469,7 +469,12 @@ th {
       id="investmentSearch"
       placeholder="Search user, phone or plan..."
     >
-
+<select id="investmentStatusFilter" class="search">
+  <option value="all">All Investments</option>
+  <option value="active">Active</option>
+  <option value="completed">Completed</option>
+  <option value="cancelled">Cancelled</option>
+</select>
     <div class="table-wrap">
       <table>
         <thead>
@@ -753,7 +758,33 @@ async function loadAdminInvestments() {
     if (!data.success) {
       throw new Error(data.message);
     }
+// Investment summary statistics
+const investments = data.investments;
 
+const totalInvested = investments.reduce(
+  (sum, item) => sum + Number(item.amount || 0),
+  0
+);
+
+const activeCount = investments.filter(
+  item => item.status === "active"
+).length;
+
+const completedCount = investments.filter(
+  item => item.status === "completed"
+).length;
+
+document.getElementById("investmentTotal").textContent =
+  formatMoney(totalInvested);
+
+document.getElementById("investmentActiveCount").textContent =
+  activeCount;
+
+document.getElementById("investmentCompletedCount").textContent =
+  completedCount;
+
+document.getElementById("investmentRecordCount").textContent =
+  investments.length;
     if (!data.investments.length) {
       tbody.innerHTML = `
         <tr><td colspan="6">No investments found.</td></tr>
@@ -1346,6 +1377,34 @@ async function loadAdminUsers(search = "") {
 document.getElementById("userSearch").addEventListener("input", function() {
   loadAdminUsers(this.value);
 });
+function filterInvestments() {
+  const search = document.getElementById("investmentSearch").value.toLowerCase();
+  const status = document.getElementById("investmentStatusFilter").value;
+
+  const rows = document.querySelectorAll("#investmentsTable tr");
+
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+
+    const matchesSearch = text.includes(search);
+
+    const rowStatus = row.querySelector(".status")?.textContent
+      .trim()
+      .toLowerCase() || "";
+
+    const matchesStatus =
+      status === "all" || rowStatus === status;
+
+    row.style.display =
+      matchesSearch && matchesStatus ? "" : "none";
+  });
+}
+
+document.getElementById("investmentSearch")
+  .addEventListener("input", filterInvestments);
+
+document.getElementById("investmentStatusFilter")
+  .addEventListener("change", filterInvestments);
 
 </script>
 
