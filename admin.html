@@ -590,6 +590,9 @@ function showSection(sectionId, button) {
     if (sectionId === "transactions") {
   loadAdminTransactions();
 }
+if (sectionId === "logs") {
+  loadAdminLogs();
+}
     if (sectionId === "settings") {
   loadAdminSettings();
 }
@@ -1013,7 +1016,82 @@ async function loadAdminTransactions() {
     `;
   }
 }
+async function loadAdminLogs() {
+  const tbody = document.getElementById("logsTable");
 
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="4">Loading audit logs...</td>
+    </tr>
+  `;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/admin-logs",
+      {
+        headers: {
+          Authorization: `Bearer ${adminToken}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to load audit logs");
+    }
+
+    const logs = await response.json();
+
+    if (!logs.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4">No audit logs found.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = logs.map(log => {
+      const action =
+        log.action ||
+        log.event ||
+        log.activity ||
+        "Unknown action";
+
+      const admin =
+        log.admin_username ||
+        log.admin ||
+        log.username ||
+        "Admin";
+
+      const details =
+        typeof log.details === "object"
+          ? JSON.stringify(log.details)
+          : log.details || log.description || "-";
+
+      const date = log.created_at
+        ? new Date(log.created_at).toLocaleString()
+        : "-";
+
+      return `
+        <tr>
+          <td>${escapeHTML(String(action))}</td>
+          <td>${escapeHTML(String(admin))}</td>
+          <td>${escapeHTML(String(details))}</td>
+          <td>${escapeHTML(String(date))}</td>
+        </tr>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Audit logs error:", error);
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4">Failed to load audit logs.</td>
+      </tr>
+    `;
+  }
+}
 async function loadAdminStats() {
   try {
     const response = await fetch("/.netlify/functions/admin-stats", {
