@@ -355,19 +355,31 @@ async function loadPlans() {
       "/.netlify/functions/investment-plans"
     );
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error("Unable to load plans");
+      throw new Error(
+        data.message || "Unable to load plans"
+      );
     }
 
-    plans = await response.json();
+    plans = Array.isArray(data)
+      ? data
+      : Array.isArray(data.plans)
+        ? data.plans
+        : [];
 
     renderPlans();
 
   } catch (error) {
-    plansContainer.innerHTML =
-      "<p>Unable to load investment plans.</p>";
+    plansContainer.innerHTML = `
+      <p style="color:#c0392b;">
+        Unable to load investment plans.
+        Please refresh the page.
+      </p>
+    `;
 
-    console.error(error);
+    console.error("Plans loading error:", error);
   }
 }
 
@@ -378,29 +390,54 @@ function renderPlans() {
     return;
   }
 
-  plansContainer.innerHTML = plans.map(plan => `
-    <div
-      class="plan"
-      data-plan-id="${escapeHTML(plan.id)}"
-      onclick="selectPlan('${escapeHTML(plan.id)}')"
-    >
-      <h3>${escapeHTML(plan.name)}</h3>
+  plansContainer.innerHTML = plans.map(plan => {
+    const minimum = Number(
+      plan.minimum_amount ?? plan.min_amount ?? 0
+    );
 
-      <p class="range">
-        ${formatMoney(plan.minimum_amount)}
-        – ${formatMoney(plan.maximum_amount)}
-      </p>
+    const maximum = Number(
+      plan.maximum_amount ?? plan.max_amount ?? 0
+    );
 
-      <p>Duration: ${plan.duration_days} days</p>
+    const rate = Number(plan.daily_rate || 0);
+    const duration = Number(plan.duration_days || 0);
 
-      <p>
-        Daily rate:
-        ${Number(plan.daily_rate || 0)}%
-      </p>
+    const active = plan.is_active !== false;
 
-      <p>Active plan</p>
-    </div>
-  `).join("");
+    return `
+      <div
+        class="plan ${active ? "" : "inactive"}"
+        data-plan-id="${escapeHTML(plan.id)}"
+        ${active
+          ? `onclick="selectPlan('${escapeHTML(plan.id)}')"`
+          : ""}
+      >
+        <h3>${escapeHTML(plan.name)}</h3>
+
+        <p class="range">
+          ${formatMoney(minimum)}
+          – ${formatMoney(maximum)}
+        </p>
+
+        <p>Minimum: ${formatMoney(minimum)}</p>
+
+        <p>Maximum: ${formatMoney(maximum)}</p>
+
+        <p>Duration: ${duration} days</p>
+
+        <p>
+          Configured rate:
+          <strong>${rate}% per day</strong>
+        </p>
+
+        <p>
+          ${active
+            ? "Available for selection"
+            : "Currently unavailable"}
+        </p>
+      </div>
+    `;
+  }).join("");
 }
 
 function selectPlan(planId) {
@@ -408,7 +445,10 @@ function selectPlan(planId) {
     plan => String(plan.id) === String(planId)
   );
 
-  if (!selectedPlan) return;
+  if (!selectedPlan || selectedPlan.is_active === false) {
+    selectedPlan = null;
+    return;
+  }
 
   document.querySelectorAll(".plan").forEach(card => {
     card.classList.remove("selected");
@@ -422,14 +462,26 @@ function selectPlan(planId) {
     selectedCard.classList.add("selected");
   }
 
+  const minimum = Number(
+    selectedPlan.minimum_amount ??
+    selectedPlan.min_amount ??
+    0
+  );
+
+  const maximum = Number(
+    selectedPlan.maximum_amount ??
+    selectedPlan.max_amount ??
+    0
+  );
+
   document.getElementById("selectedPlanName").textContent =
     selectedPlan.name;
 
   document.getElementById("minimumAmount").textContent =
-    formatMoney(selectedPlan.minimum_amount);
+    formatMoney(minimum);
 
   document.getElementById("maximumAmount").textContent =
-    formatMoney(selectedPlan.maximum_amount);
+    formatMoney(maximum);
 
   document.getElementById("duration").textContent =
     selectedPlan.duration_days + " days";
@@ -437,39 +489,51 @@ function selectPlan(planId) {
   document.getElementById("dailyRate").textContent =
     Number(selectedPlan.daily_rate || 0) + "%";
 
-  investButton.disabled = false;
+  amountInput.min = minimum;
+  amountInput.max = maximum;
+
   investButton.textContent = "Confirm Investment";
 
   validateAmount();
 }
-
 function validateAmount() {
   const amount = Number(amountInput.value);
 
   if (!selectedPlan) {
+    statusMessage.textContent = "Please select an investment plan.";
     investButton.disabled = true;
     return;
   }
 
-  if (!amount || amount <= 0) {
+  const minimum = Number(
+    selectedPlan.minimum_amount ??
+    selectedPlan.min_amount ??
+    0
+  );
+
+  const maximum = Number(
+    selectedPlan.maximum_amount ??
+    selectedPlan.max_amount ??
+    0
+  );
+
+  if (amountInput.value === "" || !amount || amount <= 0) {
     statusMessage.textContent = "";
     investButton.disabled = true;
     return;
   }
 
-  if (amount < Number(selectedPlan.minimum_amount)) {
+  if (amount < minimum) {
     statusMessage.textContent =
-      "Minimum investment is " +
-      formatMoney(selectedPlan.minimum_amount);
+      "Minimum investment is " + formatMoney(minimum);
 
     investButton.disabled = true;
     return;
   }
 
-  if (amount > Number(selectedPlan.maximum_amount)) {
+  if (amount > maximum) {
     statusMessage.textContent =
-      "Maximum investment is " +
-      formatMoney(selectedPlan.maximum_amount);
+      "Maximum investment is " + formatMoney(maximum);
 
     investButton.disabled = true;
     return;
@@ -477,14 +541,15 @@ function validateAmount() {
 
   if (amount > walletBalance) {
     statusMessage.textContent =
-      "Insufficient wallet balance.";
+      "Insufficient wallet balance. Your balance is " +
+      formatMoney(walletBalance);
 
     investButton.disabled = true;
     return;
   }
 
   statusMessage.textContent =
-    "Amount is valid. Review the terms before proceeding.";
+    "Amount is within the selected plan limits.";
 
   investButton.disabled = false;
 }
